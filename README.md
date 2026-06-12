@@ -30,6 +30,28 @@ pnpm build
 pnpm test
 ```
 
+## Deploying mock dashboard to Vercel
+
+Connect this repository to Vercel as a Vite project.
+
+- Framework preset: `Vite`
+- Build command: `pnpm build`
+- Output directory: `dist`
+- Package manager: `pnpm`
+
+Set only mock-safe environment variables for the first deployment:
+
+```env
+DASHBOARD_DATA_MODE=mock
+DASHBOARD_ENV=production
+CRON_SECRET=<set in Vercel only if GET refresh is used>
+DASHBOARD_REFRESH_SECRET=<set in Vercel only if POST refresh is used>
+```
+
+Do not configure `CRM_API_KEY` or `CRM_BASE_URL` until the CRM/Twenty schema discovery phase is complete. Do not configure any `VITE_CRM_API_KEY`; CRM credentials are server-side only and must never be exposed to browser code.
+
+If future snapshots include internal or sensitive operational data, protect the deployment with Vercel access controls or dashboard auth before sharing the URL.
+
 ## API Endpoints
 
 - `GET /api/ia-mujeres/snapshot` returns a validated mock snapshot by default.
