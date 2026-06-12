@@ -32,6 +32,12 @@ export type IaMujeresDashboardSnapshot = {
     runtimeVerified?: boolean
     lastSuccessfulRefreshAt?: string
     dataMode?: 'mock' | 'crm'
+    crmConfigured?: boolean
+    lastError?: string
+    schemaDiscovery?: {
+      status: 'not_run' | 'available' | 'missing_env' | 'failed'
+      summaryPath?: string
+    }
   }
   totals: {
     opportunities: number

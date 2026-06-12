@@ -60,6 +60,14 @@ export const iaMujeresDashboardSnapshotSchema = z.object({
     runtimeVerified: z.boolean().optional(),
     lastSuccessfulRefreshAt: z.string().optional(),
     dataMode: z.enum(['mock', 'crm']).optional(),
+    crmConfigured: z.boolean().optional(),
+    lastError: z.string().optional(),
+    schemaDiscovery: z
+      .object({
+        status: z.enum(['not_run', 'available', 'missing_env', 'failed']),
+        summaryPath: z.string().optional(),
+      })
+      .optional(),
   }),
   totals: z.object({
     opportunities: z.number(),

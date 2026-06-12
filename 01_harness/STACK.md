@@ -9,6 +9,7 @@
 - Recharts
 - Zod
 - Vercel Functions under root `api/`
+- Twenty CRM server-only client for read-only schema discovery and CRM mode
 
 ## Package manager
 - pnpm
@@ -27,3 +28,5 @@
 - `pnpm typecheck` — TypeScript checks
 - `pnpm lint` — ESLint
 - `pnpm test` — Vitest
+- `pnpm crm:discover` — read-only Twenty schema discovery, requires server-side CRM env vars
+- `pnpm crm:probe` — read-only IA Mujeres CRM probe, requires server-side CRM env vars

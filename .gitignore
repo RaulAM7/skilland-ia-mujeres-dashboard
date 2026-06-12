@@ -9,3 +9,5 @@ dist/
 
 *.local
 *.tsbuildinfo
+
+05_scratch/crm-schema/*.json

@@ -1,6 +1,6 @@
 import { buildIaMujeresSnapshot, createErrorSnapshot } from '../ia-mujeres/build-snapshot'
 import { MockIaMujeresRepository } from '../crm/mock-ia-mujeres-repository'
-import { CRM_STUB_MESSAGE, TwentyIaMujeresRepository } from '../crm/twenty-ia-mujeres-repository'
+import { TwentyIaMujeresRepository } from '../crm/twenty-ia-mujeres-repository'
 
 export type ApiResponse = {
   status: number
@@ -10,17 +10,42 @@ export type ApiResponse = {
 
 export async function getSnapshotResponse(env: NodeJS.ProcessEnv = process.env): Promise<ApiResponse> {
   const dataMode = env.DASHBOARD_DATA_MODE ?? 'mock'
-  const campaignKey = 'ia-mujeres'
+  const campaignKey = env.CRM_CAMPAIGN_KEY ?? 'ia-mujeres'
 
   try {
     if (dataMode === 'crm') {
-      await new TwentyIaMujeresRepository().getHealth()
-      throw new Error(CRM_STUB_MESSAGE)
+      const repository = TwentyIaMujeresRepository.fromEnv(env)
+      const health = await repository.getHealth()
+      if (!health.ok) {
+        throw new Error(health.message ?? 'Twenty CRM is not available.')
+      }
+
+      const snapshot = await buildIaMujeresSnapshot({
+        repository,
+        campaignKey,
+        provider: 'twenty',
+        runtimeVerified: false,
+        source: {
+          crmConfigured: repository.isConfigured(),
+          schemaDiscovery: {
+            status: 'not_run',
+          },
+        },
+      })
+
+      return {
+        status: snapshot.status === 'error' ? 503 : 200,
+        body: snapshot,
+        headers: {
+          'cache-control': 'no-store',
+        },
+      }
     }
 
     const snapshot = await buildIaMujeresSnapshot({
       repository: new MockIaMujeresRepository(),
       campaignKey,
+      provider: 'mock',
     })
 
     return {
@@ -33,11 +58,20 @@ export async function getSnapshotResponse(env: NodeJS.ProcessEnv = process.env):
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown snapshot error'
     return {
-      status: dataMode === 'crm' ? 501 : 500,
+      status: dataMode === 'crm' ? 503 : 500,
       body: createErrorSnapshot({
         campaignKey,
         message,
         provider: dataMode === 'crm' ? 'twenty' : 'mock',
+        source: {
+          crmConfigured: dataMode === 'crm' ? Boolean(env.CRM_BASE_URL && env.CRM_API_KEY) : undefined,
+          schemaDiscovery:
+            dataMode === 'crm'
+              ? {
+                  status: env.CRM_BASE_URL && env.CRM_API_KEY ? 'not_run' : 'missing_env',
+                }
+              : undefined,
+        },
       }),
       headers: {
         'cache-control': 'no-store',

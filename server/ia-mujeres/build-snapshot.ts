@@ -12,6 +12,9 @@ import { isKnownStage } from './stage-mapping'
 export async function buildIaMujeresSnapshot(params: {
   repository: IaMujeresCrmRepository
   campaignKey: string
+  provider?: 'mock' | 'twenty' | 'custom'
+  runtimeVerified?: boolean
+  source?: Partial<IaMujeresDashboardSnapshot['source']>
 }): Promise<IaMujeresDashboardSnapshot> {
   if (isSnapshotBackedRepository(params.repository)) {
     return iaMujeresDashboardSnapshotSchema.parse(await params.repository.getSnapshot())
@@ -29,22 +32,42 @@ export async function buildIaMujeresSnapshot(params: {
   const unknownStageCount = rawOpportunities.filter(
     (opportunity) => !isKnownStage(opportunity.commercialStage ?? opportunity.iaMujeresFunnelStage),
   ).length
+  const baseTotals = buildTotals(opportunities, tasks)
   const totals = {
-    ...buildTotals(opportunities, tasks),
-    companies: rawCompanies.length || buildTotals(opportunities, tasks).companies,
+    ...baseTotals,
+    companies: rawCompanies.length || baseTotals.companies,
     people: rawPeople.length,
+  }
+  const warnings: IaMujeresDashboardSnapshot['warnings'] = []
+
+  if (unknownStageCount) {
+    warnings.push({
+      code: 'UNKNOWN_STAGE',
+      message: 'Hay oportunidades con stage no reconocido.',
+      count: unknownStageCount,
+      source: 'schema',
+    })
+  }
+
+  if (params.provider === 'twenty' && !params.runtimeVerified) {
+    warnings.push({
+      code: 'RUNTIME_SCHEMA_UNVERIFIED',
+      message: 'Twenty CRM esta conectado en modo read-only, pero el mapping runtime aun no esta confirmado.',
+      source: 'schema',
+    })
   }
 
   const snapshot: IaMujeresDashboardSnapshot = {
     schemaVersion: '1.0',
     generatedAt: new Date().toISOString(),
-    status: unknownStageCount > 0 ? 'partial' : 'ok',
+    status: warnings.length > 0 ? 'partial' : 'ok',
     source: {
-      crmProvider: 'custom',
+      crmProvider: params.provider ?? 'custom',
       campaignKey: params.campaignKey,
       recordsRead: rawOpportunities.length + rawTasks.length + rawCompanies.length + rawPeople.length,
-      runtimeVerified: false,
-      dataMode: 'crm',
+      runtimeVerified: params.runtimeVerified ?? false,
+      dataMode: params.provider === 'mock' ? 'mock' : 'crm',
+      ...params.source,
     },
     totals,
     funnelStages: buildFunnelStages(opportunities),
@@ -57,16 +80,7 @@ export async function buildIaMujeresSnapshot(params: {
     alerts: [],
     tasks,
     opportunities,
-    warnings: unknownStageCount
-      ? [
-          {
-            code: 'UNKNOWN_STAGE',
-            message: 'Hay oportunidades con stage no reconocido.',
-            count: unknownStageCount,
-            source: 'schema',
-          },
-        ]
-      : [],
+    warnings,
   }
 
   return iaMujeresDashboardSnapshotSchema.parse(snapshot)
@@ -76,6 +90,7 @@ export function createErrorSnapshot(params: {
   campaignKey: string
   message: string
   provider?: 'mock' | 'twenty' | 'custom'
+  source?: Partial<IaMujeresDashboardSnapshot['source']>
 }): IaMujeresDashboardSnapshot {
   return {
     schemaVersion: '1.0',
@@ -86,6 +101,8 @@ export function createErrorSnapshot(params: {
       campaignKey: params.campaignKey,
       runtimeVerified: false,
       dataMode: params.provider === 'mock' ? 'mock' : 'crm',
+      lastError: params.message,
+      ...params.source,
     },
     totals: {
       opportunities: 0,

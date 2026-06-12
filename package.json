@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "concurrently -k -n vite,api \"vite --host 0.0.0.0\" \"tsx watch scripts/dev-api.ts\"",
     "build": "tsc -b && vite build",
+    "crm:discover": "tsx scripts/discover-twenty-schema.ts",
+    "crm:probe": "tsx scripts/probe-twenty-ia-mujeres.ts",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",

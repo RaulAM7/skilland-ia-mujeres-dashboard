@@ -1,12 +1,10 @@
 # OPEN QUESTIONS
 
 ## Blocking Before Implementation
-- Is there any legal/licensing constraint that prevents using shadcn-admin as the visual/structural base?
-- Is there any repo policy that forbids a Vite/Vercel app at repository root alongside the scaffold folders?
+- None for the mock dashboard and read-only Twenty discovery foundation.
 
 ## Can Be Answered During Implementation
 - What is the final runtime CRM/Twenty base URL?
-- Will CRM access use Twenty GraphQL, REST, or a custom read-only endpoint?
 - Is a read-only CRM API key available?
 - What are the exact deployed object names and relation names for opportunities, tasks, companies and people?
 - How is an opportunity reliably filtered into the IA Mujeres campaign?
@@ -15,6 +13,7 @@
 - What task fields represent status, due date, owner, related opportunity and category?
 - What auth/protection should be used for the first real-data deployment?
 - Should the Debug page expose raw snapshot only in local/dev or also behind admin auth in preview?
+- Does the deployed Twenty workspace expose enough read-only REST endpoints for the current adapter, or should generated GraphQL queries be configured after discovery?
 
 ## Can Wait Until Phase 2
 - Which persistent cache should be used: Vercel KV, Redis/Upstash, Blob, Postgres/Neon or another store?

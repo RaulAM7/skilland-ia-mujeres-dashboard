@@ -16,12 +16,27 @@ export function DebugPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }
         <DebugItem title="Status">
           <SnapshotStatusBadge status={snapshot.status} />
         </DebugItem>
+        <DebugItem title="Data mode">{snapshot.source.dataMode ?? 'unknown'}</DebugItem>
         <DebugItem title="Provider">
           <Badge variant="muted">{snapshot.source.crmProvider}</Badge>
         </DebugItem>
         <DebugItem title="Campaign">{snapshot.source.campaignKey}</DebugItem>
         <DebugItem title="Runtime verified">{String(snapshot.source.runtimeVerified ?? false)}</DebugItem>
+        <DebugItem title="CRM configured">
+          {snapshot.source.crmConfigured === undefined ? 'n/a' : String(snapshot.source.crmConfigured)}
+        </DebugItem>
+        <DebugItem title="Records read">{snapshot.source.recordsRead ?? 0}</DebugItem>
+        <DebugItem title="Schema discovery">{snapshot.source.schemaDiscovery?.status ?? 'not_run'}</DebugItem>
       </section>
+
+      {snapshot.source.lastError ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Last safe error</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{snapshot.source.lastError}</CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>

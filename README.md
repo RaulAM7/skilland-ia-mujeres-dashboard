@@ -68,9 +68,39 @@ Default mode is mock:
 DASHBOARD_DATA_MODE=mock
 ```
 
-CRM mode is intentionally stubbed until `CRM_BASE_URL`, `CRM_API_KEY`, and the runtime Twenty schema are verified.
+CRM mode is read-only and defensive. It requires `CRM_BASE_URL`, `CRM_API_KEY`, and runtime schema discovery before live metrics can be trusted.
 
 Never use `VITE_CRM_API_KEY`. CRM credentials are server-side only.
+
+## CRM/Twenty real mode
+
+Twenty APIs are generated from the workspace schema, so object names and fields must be discovered before trusting dashboard mappings. Official docs: https://docs.twenty.com/developers/extend/api
+
+Configure these variables only outside git, for example in your local shell or Vercel project settings:
+
+```env
+DASHBOARD_DATA_MODE=crm
+CRM_PROVIDER=twenty
+CRM_BASE_URL=https://api.twenty.com
+CRM_API_KEY=
+CRM_API_MODE=graphql
+CRM_CAMPAIGN_KEY=ia-mujeres
+```
+
+Create the API key in Twenty under Settings -> API & Webhooks. Use a read-only or role-limited key if the workspace allows it.
+
+Discovery workflow:
+
+```bash
+pnpm crm:discover
+pnpm crm:probe
+```
+
+- `pnpm crm:discover` reads schema/metadata only and writes a redacted raw output under `05_scratch/crm-schema/` plus a summary under `04_outputs/data_contract/`.
+- `pnpm crm:probe` samples a small number of records read-only to verify campaign filtering and field availability.
+- If CRM env vars are missing, both commands exit safely with a clear `SKIPPED` message.
+- These commands do not run in CI and must not be given secrets in frontend env vars.
+- Do not configure `CRM_API_KEY` as `VITE_CRM_API_KEY`.
 
 ## Scaffold
 

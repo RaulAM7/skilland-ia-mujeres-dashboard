@@ -22,6 +22,12 @@ export type IaMujeresDashboardSnapshot = {
     runtimeVerified?: boolean
     lastSuccessfulRefreshAt?: string
     dataMode?: 'mock' | 'crm'
+    crmConfigured?: boolean
+    lastError?: string
+    schemaDiscovery?: {
+      status: 'not_run' | 'available' | 'missing_env' | 'failed'
+      summaryPath?: string
+    }
   }
 
   totals: {
@@ -195,6 +201,7 @@ These may be useful but must not be treated as confirmed:
 - CRM unavailable: return `status: 'error'` unless a cache exists in a later phase.
 - Partial data: return `status: 'partial'`, include available sections and emit warnings.
 - Schema mismatch: return `status: 'partial'` or `error` depending on severity; never throw raw payloads to UI.
+- CRM readiness metadata may include `crmConfigured`, `lastError` and `schemaDiscovery`, but these fields must only contain safe redacted status text.
 
 ## Data Minimization Rules
 - Do not include CRM API keys, refresh secrets, cron secrets or env values.
