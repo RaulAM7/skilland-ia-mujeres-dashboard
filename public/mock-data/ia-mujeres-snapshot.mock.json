@@ -1,0 +1,340 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-06-12T10:30:00.000Z",
+  "status": "ok",
+  "source": {
+    "crmProvider": "mock",
+    "campaignKey": "ia-mujeres",
+    "recordsRead": 130,
+    "runtimeVerified": false,
+    "dataMode": "mock"
+  },
+  "totals": {
+    "opportunities": 100,
+    "companies": 100,
+    "people": 0,
+    "notSent": 70,
+    "draftCreated": 0,
+    "outreachAttempts": 30,
+    "email1Sent": 28,
+    "sentWithoutBounce": 28,
+    "bouncesDetected": 2,
+    "repliesDetected": 0,
+    "meetingProposed": 0,
+    "meetingScheduled": 0,
+    "manualReview": 2,
+    "openTasks": 30,
+    "overdueTasks": 2,
+    "dueTodayTasks": 5,
+    "followupsPending": 28
+  },
+  "technicalEmailOutcomes": {
+    "attempted": 30,
+    "sentWithoutBounce": 28,
+    "bounceOrManualReviewIncidents": 2,
+    "notes": "Mock distinguishes commercial stage from technical email result. The 2 incidents are opportunities in manual review after outreach attempt."
+  },
+  "funnelStages": [
+    {
+      "key": "NOT_SENT",
+      "label": "Sin contactar",
+      "count": 70,
+      "percentage": 70,
+      "order": 10,
+      "semantic": "neutral"
+    },
+    {
+      "key": "EMAIL_1_SENT",
+      "label": "Email 1 enviado sin bounce",
+      "count": 28,
+      "percentage": 28,
+      "order": 30,
+      "semantic": "active"
+    },
+    {
+      "key": "WRONG_CONTACT_MANUAL_REVIEW",
+      "label": "Revision manual por contacto",
+      "count": 2,
+      "percentage": 2,
+      "order": 80,
+      "semantic": "danger"
+    }
+  ],
+  "kpiCards": [
+    {
+      "key": "opportunities",
+      "title": "Oportunidades",
+      "value": 100,
+      "helper": "Total mock IA Mujeres"
+    },
+    {
+      "key": "not_sent",
+      "title": "Sin contactar",
+      "value": 70,
+      "helper": "Pendientes de primer email"
+    },
+    {
+      "key": "sent_without_bounce",
+      "title": "Enviados sin bounce",
+      "value": 28,
+      "helper": "Resultado tecnico efectivo"
+    },
+    {
+      "key": "manual_review",
+      "title": "Revision manual",
+      "value": 2,
+      "helper": "Incidencias tras intento de outreach"
+    },
+    {
+      "key": "open_tasks",
+      "title": "Tareas abiertas",
+      "value": 30,
+      "helper": "Seguimientos y revisiones"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "alert-manual-review",
+      "level": "warning",
+      "title": "2 entidades requieren revision manual",
+      "description": "El mock marca dos oportunidades con incidencia tecnica/contacto y revision humana pendiente.",
+      "actionLabel": "Ver revision",
+      "href": "/ia-mujeres/operation?filter=manual_review"
+    },
+    {
+      "id": "alert-followups",
+      "level": "info",
+      "title": "28 follow-ups pendientes",
+      "description": "No hay replies detectadas en el mock; preparar seguimiento cuando venza la ventana."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Revisar contacto alternativo para Cabildo Norte Demo",
+      "status": "overdue",
+      "dueAt": "2026-06-11T09:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "manual_review",
+      "relatedOpportunity": { "id": "opp-029", "name": "Cabildo Norte Demo" },
+      "relatedCompany": { "id": "co-029", "name": "Cabildo Norte Demo" }
+    },
+    {
+      "id": "task-002",
+      "title": "Validar email generico de Ayuntamiento Medianias Demo",
+      "status": "overdue",
+      "dueAt": "2026-06-11T12:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "data_quality",
+      "relatedOpportunity": { "id": "opp-030", "name": "Ayuntamiento Medianias Demo" },
+      "relatedCompany": { "id": "co-030", "name": "Ayuntamiento Medianias Demo" }
+    },
+    {
+      "id": "task-003",
+      "title": "Preparar follow-up 1 para Area Igualdad Capital Demo",
+      "status": "open",
+      "dueAt": "2026-06-12T10:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "followup",
+      "relatedOpportunity": { "id": "opp-001", "name": "Area Igualdad Capital Demo" },
+      "relatedCompany": { "id": "co-001", "name": "Area Igualdad Capital Demo" }
+    },
+    {
+      "id": "task-004",
+      "title": "Preparar follow-up 1 para Camara Comercio Demo",
+      "status": "open",
+      "dueAt": "2026-06-12T11:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "followup",
+      "relatedOpportunity": { "id": "opp-002", "name": "Camara Comercio Demo" },
+      "relatedCompany": { "id": "co-002", "name": "Camara Comercio Demo" }
+    },
+    {
+      "id": "task-005",
+      "title": "Comprobar replies nuevas antes de seguimiento",
+      "status": "open",
+      "dueAt": "2026-06-12T13:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "followup"
+    },
+    {
+      "id": "task-006",
+      "title": "Priorizar entidades publicas de alto fit",
+      "status": "open",
+      "dueAt": "2026-06-12T15:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "other"
+    },
+    {
+      "id": "task-007",
+      "title": "Revisar oportunidades sin siguiente accion",
+      "status": "open",
+      "dueAt": "2026-06-12T17:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "data_quality"
+    },
+    {
+      "id": "task-008",
+      "title": "Preparar lote de seguimiento institucional",
+      "status": "open",
+      "dueAt": "2026-06-13T09:00:00.000Z",
+      "owner": "Equipo IA Mujeres",
+      "category": "followup"
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-001",
+      "name": "Area Igualdad Capital Demo",
+      "companyName": "Area Igualdad Capital Demo",
+      "commercialStage": "EMAIL_1_SENT",
+      "commercialStageLabel": "Email 1 enviado",
+      "outreachStatus": "FOLLOWUP_1_DUE",
+      "technicalEmailOutcome": "sent_without_bounce",
+      "owner": "Equipo IA Mujeres",
+      "lastContactAt": "2026-06-07T09:00:00.000Z",
+      "nextActionAt": "2026-06-12T10:00:00.000Z",
+      "nextActionLabel": "Preparar follow-up 1",
+      "territory": "Canarias",
+      "entityType": "area de igualdad",
+      "icp": "administracion publica"
+    },
+    {
+      "id": "opp-002",
+      "name": "Camara Comercio Demo",
+      "companyName": "Camara Comercio Demo",
+      "commercialStage": "EMAIL_1_SENT",
+      "commercialStageLabel": "Email 1 enviado",
+      "outreachStatus": "FOLLOWUP_1_DUE",
+      "technicalEmailOutcome": "sent_without_bounce",
+      "owner": "Equipo IA Mujeres",
+      "lastContactAt": "2026-06-07T09:30:00.000Z",
+      "nextActionAt": "2026-06-12T11:00:00.000Z",
+      "nextActionLabel": "Follow-up institucional",
+      "territory": "Canarias",
+      "entityType": "camara de comercio",
+      "icp": "entidad empresarial"
+    },
+    {
+      "id": "opp-003",
+      "name": "Asociacion Mujeres Costa Demo",
+      "companyName": "Asociacion Mujeres Costa Demo",
+      "commercialStage": "EMAIL_1_SENT",
+      "commercialStageLabel": "Email 1 enviado",
+      "outreachStatus": "WAITING_REPLY",
+      "technicalEmailOutcome": "sent_without_bounce",
+      "owner": "Equipo IA Mujeres",
+      "lastContactAt": "2026-06-07T10:00:00.000Z",
+      "nextActionAt": "2026-06-14T10:00:00.000Z",
+      "nextActionLabel": "Esperar ventana de respuesta",
+      "territory": "Canarias",
+      "entityType": "asociacion",
+      "icp": "asociacion mujeres"
+    },
+    {
+      "id": "opp-004",
+      "name": "Ayuntamiento Rural Demo",
+      "companyName": "Ayuntamiento Rural Demo",
+      "commercialStage": "NOT_SENT",
+      "commercialStageLabel": "Sin contactar",
+      "outreachStatus": "READY_FOR_FIRST_EMAIL",
+      "technicalEmailOutcome": "not_attempted",
+      "owner": "Equipo IA Mujeres",
+      "nextActionAt": "2026-06-13T10:00:00.000Z",
+      "nextActionLabel": "Crear primer draft",
+      "territory": "Canarias",
+      "entityType": "ayuntamiento",
+      "icp": "administracion publica"
+    },
+    {
+      "id": "opp-005",
+      "name": "Fundacion Empleo Demo",
+      "companyName": "Fundacion Empleo Demo",
+      "commercialStage": "NOT_SENT",
+      "commercialStageLabel": "Sin contactar",
+      "outreachStatus": "READY_FOR_FIRST_EMAIL",
+      "technicalEmailOutcome": "not_attempted",
+      "owner": "Equipo IA Mujeres",
+      "nextActionAt": "2026-06-13T11:00:00.000Z",
+      "nextActionLabel": "Crear primer draft",
+      "territory": "Canarias",
+      "entityType": "fundacion",
+      "icp": "empleo e inclusion"
+    },
+    {
+      "id": "opp-029",
+      "name": "Cabildo Norte Demo",
+      "companyName": "Cabildo Norte Demo",
+      "commercialStage": "WRONG_CONTACT_MANUAL_REVIEW",
+      "commercialStageLabel": "Revision manual por contacto",
+      "outreachStatus": "BOUNCED",
+      "technicalEmailOutcome": "bounced",
+      "owner": "Equipo IA Mujeres",
+      "lastContactAt": "2026-06-07T16:00:00.000Z",
+      "nextActionAt": "2026-06-11T09:00:00.000Z",
+      "nextActionLabel": "Buscar contacto alternativo",
+      "manualReviewReason": "Mock bounce/contacto incorrecto",
+      "territory": "Canarias",
+      "entityType": "cabildo",
+      "icp": "administracion publica"
+    },
+    {
+      "id": "opp-030",
+      "name": "Ayuntamiento Medianias Demo",
+      "companyName": "Ayuntamiento Medianias Demo",
+      "commercialStage": "WRONG_CONTACT_MANUAL_REVIEW",
+      "commercialStageLabel": "Revision manual por contacto",
+      "outreachStatus": "NEEDS_MANUAL_REVIEW",
+      "technicalEmailOutcome": "manual_review",
+      "owner": "Equipo IA Mujeres",
+      "lastContactAt": "2026-06-07T16:30:00.000Z",
+      "nextActionAt": "2026-06-11T12:00:00.000Z",
+      "nextActionLabel": "Validar email generico",
+      "manualReviewReason": "Mock contacto generico pendiente de validacion",
+      "territory": "Canarias",
+      "entityType": "ayuntamiento",
+      "icp": "administracion publica"
+    }
+  ],
+  "batches": [
+    {
+      "id": "batch-mock-001",
+      "label": "Mock batch email 1",
+      "sentAt": "2026-06-07T09:00:00.000Z",
+      "sentCount": 30,
+      "bounceCount": 2,
+      "replyCount": 0,
+      "status": "mock"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "MOCK_DATA",
+      "message": "Snapshot uses mock organizations and is not runtime CRM data.",
+      "source": "mock"
+    },
+    {
+      "code": "RUNTIME_SCHEMA_UNVERIFIED",
+      "message": "CRM field names are source-confirmed but have not been verified against the deployed API.",
+      "source": "schema"
+    },
+    {
+      "code": "DERIVED_METRIC",
+      "message": "sentWithoutBounce is derived from outreach attempts minus bounce/manual-review incidents in this mock.",
+      "count": 28,
+      "source": "derived"
+    },
+    {
+      "code": "OPPORTUNITIES_TRUNCATED",
+      "message": "Mock totals represent 100 opportunities, while the opportunities array contains representative rows for UI development.",
+      "count": 93,
+      "source": "mock"
+    },
+    {
+      "code": "TASKS_TRUNCATED",
+      "message": "Mock totals represent 30 open tasks, while the tasks array contains representative rows for UI development.",
+      "count": 22,
+      "source": "mock"
+    }
+  ]
+}

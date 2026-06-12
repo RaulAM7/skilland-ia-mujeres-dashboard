@@ -1,0 +1,9 @@
+{
+  "framework": "vite",
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/ia-mujeres", "destination": "/index.html" },
+    { "source": "/ia-mujeres/(.*)", "destination": "/index.html" }
+  ]
+}
