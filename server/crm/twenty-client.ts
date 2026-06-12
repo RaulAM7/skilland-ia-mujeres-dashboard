@@ -92,21 +92,18 @@ export function createTwentyClient(config: TwentyClientConfig): TwentyClient {
   return {
     async graphql<T>(query: string, variables: Record<string, unknown> = {}) {
       assertSafeGraphqlQuery(query)
-      const graphqlUrl = new URL(normalized.graphqlUrl)
-      graphqlUrl.searchParams.set('query', query)
-      if (Object.keys(variables).length > 0) {
-        graphqlUrl.searchParams.set('variables', JSON.stringify(variables))
-      }
 
       const payload = await requestJson<{
         data?: unknown
         errors?: unknown
-      }>(graphqlUrl.toString(), {
-        method: 'GET',
+      }>(normalized.graphqlUrl, {
+        method: 'POST',
         headers: {
           accept: 'application/json',
           authorization: `Bearer ${normalized.apiKey}`,
+          'content-type': 'application/json',
         },
+        body: JSON.stringify({ query, variables }),
       })
 
       if (Array.isArray(payload.errors) && payload.errors.length > 0) {
@@ -232,9 +229,16 @@ function buildRestUrl(restBaseUrl: string, path: string) {
 }
 
 function assertSafeGraphqlQuery(query: string) {
-  if (/^\s*mutation\b/i.test(query)) {
+  if (/\bmutation\b/i.test(stripGraphqlComments(query))) {
     throw new TwentyClientError('UNSAFE_OPERATION', 'Twenty GraphQL mutations are disabled in read-only mode.')
   }
+}
+
+function stripGraphqlComments(query: string) {
+  return query
+    .split(/\r?\n/)
+    .map((line) => line.replace(/#.*/, ''))
+    .join('\n')
 }
 
 function parseJson(text: string): unknown {

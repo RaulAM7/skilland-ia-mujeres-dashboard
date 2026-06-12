@@ -1,5 +1,8 @@
 import { createServer, type ServerResponse } from 'node:http'
+import { loadServerOnlyLocalEnv } from '../server/env/load-local-env'
 import { getRefreshResponse, getSnapshotResponse } from '../server/api/ia-mujeres-http'
+
+loadServerOnlyLocalEnv()
 
 const port = Number(process.env.DEV_API_PORT ?? 5174)
 

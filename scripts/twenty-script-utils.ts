@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { loadServerOnlyLocalEnv } from '../server/env/load-local-env'
 import {
   createTwentyClient,
   redactSensitiveText,
@@ -27,6 +28,8 @@ export const CRM_SCHEMA_SCRATCH_DIR = '05_scratch/crm-schema'
 export const DATA_CONTRACT_OUTPUT_DIR = '04_outputs/data_contract'
 
 export function loadTwentyScriptEnv(env: NodeJS.ProcessEnv = process.env): TwentyScriptEnv {
+  loadServerOnlyLocalEnv({ env })
+
   const baseUrl = env.CRM_BASE_URL?.trim()
   const apiKey = env.CRM_API_KEY?.trim()
   const apiMode = env.CRM_API_MODE === 'rest' ? 'rest' : 'graphql'

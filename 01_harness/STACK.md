@@ -10,6 +10,7 @@
 - Zod
 - Vercel Functions under root `api/`
 - Twenty CRM server-only client for read-only schema discovery and CRM mode
+- Server-only `.env.local` loader for Node scripts and local dev API
 
 ## Package manager
 - pnpm
@@ -30,3 +31,9 @@
 - `pnpm test` — Vitest
 - `pnpm crm:discover` — read-only Twenty schema discovery, requires server-side CRM env vars
 - `pnpm crm:probe` — read-only IA Mujeres CRM probe, requires server-side CRM env vars
+
+## CRM read-only guardrails
+- GraphQL `POST` is allowed only for read queries/introspection.
+- GraphQL mutations are forbidden.
+- REST `POST`, `PUT`, `PATCH` and `DELETE` to CRM are forbidden.
+- `.env.local` must not be imported by frontend `src/` code.

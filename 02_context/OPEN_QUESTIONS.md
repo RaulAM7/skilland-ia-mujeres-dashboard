@@ -6,6 +6,7 @@
 ## Can Be Answered During Implementation
 - What is the final runtime CRM/Twenty base URL?
 - Is a read-only CRM API key available?
+- Can `.env.local` be populated locally with `CRM_BASE_URL` and `CRM_API_KEY` for real discovery?
 - What are the exact deployed object names and relation names for opportunities, tasks, companies and people?
 - How is an opportunity reliably filtered into the IA Mujeres campaign?
 - Are `iaMujeresFunnelStage` and `outreachStatus` available through the runtime API exactly as named in source docs?
@@ -14,6 +15,7 @@
 - What auth/protection should be used for the first real-data deployment?
 - Should the Debug page expose raw snapshot only in local/dev or also behind admin auth in preview?
 - Does the deployed Twenty workspace expose enough read-only REST endpoints for the current adapter, or should generated GraphQL queries be configured after discovery?
+- Which fields can be safely summarized in this public repository without exposing real organizations or PII?
 
 ## Can Wait Until Phase 2
 - Which persistent cache should be used: Vercel KV, Redis/Upstash, Blob, Postgres/Neon or another store?

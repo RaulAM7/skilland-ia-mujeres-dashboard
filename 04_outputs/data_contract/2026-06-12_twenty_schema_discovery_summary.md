@@ -1,6 +1,6 @@
 # Twenty Schema Discovery Summary
 
-Generated at: 2026-06-12T12:44:57.614Z
+Generated at: 2026-06-12T13:04:24.759Z
 
 Status: skipped
 
