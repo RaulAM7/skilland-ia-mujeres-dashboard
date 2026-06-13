@@ -1,22 +1,22 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
-import { getOperationHref } from '../lib/operation-route-filter'
 import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { DashboardOpportunity, DashboardTask } from '../types/dashboard-snapshot'
 
 export function FocusedOpportunityPanel({
   opportunity,
   relatedTasks,
+  actionLink,
 }: {
   opportunity: DashboardOpportunity
   relatedTasks: DashboardTask[]
+  actionLink?: {
+    href: string
+    label: string
+  }
 }) {
   const nextTask = relatedTasks[0]
-  const operationHref = getOperationHref({
-    taskFilter: 'all',
-    entitySearch: opportunity.companyName ?? opportunity.name,
-  })
 
   return (
     <Card>
@@ -59,22 +59,24 @@ export function FocusedOpportunityPanel({
           <p className="text-sm text-muted-foreground">No hay tareas relacionadas con esta entidad en la muestra actual.</p>
         )}
 
-        <div>
-          <a
-            href={operationHref}
-            onClick={(event) => {
-              if (!shouldHandleAppNavigation({ event, href: operationHref, locationOrigin: window.location.origin })) {
-                return
-              }
+        {actionLink ? (
+          <div>
+            <a
+              href={actionLink.href}
+              onClick={(event) => {
+                if (!shouldHandleAppNavigation({ event, href: actionLink.href, locationOrigin: window.location.origin })) {
+                  return
+                }
 
-              event.preventDefault()
-              navigateAppTo(operationHref)
-            }}
-            className="inline-flex text-sm font-medium text-foreground underline underline-offset-4"
-          >
-            Abrir entidad en operacion
-          </a>
-        </div>
+                event.preventDefault()
+                navigateAppTo(actionLink.href)
+              }}
+              className="inline-flex text-sm font-medium text-foreground underline underline-offset-4"
+            >
+              {actionLink.label}
+            </a>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   )

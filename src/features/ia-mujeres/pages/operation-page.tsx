@@ -4,7 +4,10 @@ import { Button } from '@/components/ui/button'
 import { navigateAppTo } from '@/lib/app-navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
+import { FocusedOpportunityPanel } from '../components/focused-opportunity-panel'
 import { filterTasks, filterTasksByEntity, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
+import { getOpportunityFunnelHref } from '../lib/entity-links'
+import { filterOpportunities } from '../lib/filter-opportunities'
 import { filterManualReviewOpportunitiesByEntity, getManualReviewOpportunities } from '../lib/manual-review-opportunities'
 import {
   getOperationHref,
@@ -14,6 +17,7 @@ import {
 } from '../lib/operation-route-filter'
 import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
+import { getRelatedTasksForOpportunity } from '../lib/opportunity-related-tasks'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { TasksTable } from '../components/tasks-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
@@ -28,12 +32,19 @@ export function OperationPage({
   const routeFilters = useMemo(() => getOperationRouteFiltersFromSearch(search), [search])
   const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>(routeFilters.taskFilter)
   const [entitySearch, setEntitySearch] = useState(routeFilters.entitySearch)
+  const matchingOpportunities = filterOpportunities(snapshot.opportunities, {
+    search: entitySearch,
+    stageKey: 'all',
+    technicalOutcome: 'all',
+  })
+  const focusedOpportunity = entitySearch && matchingOpportunities.length === 1 ? matchingOpportunities[0] : undefined
   const entityScopedTasks = filterTasksByEntity(snapshot.tasks, entitySearch)
   const filteredTasks = filterTasks(entityScopedTasks, taskFilter)
   const manualReview = filterManualReviewOpportunitiesByEntity(
     getManualReviewOpportunities(snapshot.opportunities),
     entitySearch,
   )
+  const focusedOpportunityTasks = focusedOpportunity ? getRelatedTasksForOpportunity(snapshot.tasks, focusedOpportunity) : []
   const taskQueueOptions: Array<{ key: TaskQueueFilter; label: string; count: number }> = [
     { key: 'all', label: 'Todas', count: entityScopedTasks.length },
     { key: 'overdue', label: 'Vencidas', count: filterTasks(entityScopedTasks, 'overdue').length },
@@ -136,6 +147,17 @@ export function OperationPage({
           </div>
         </CardContent>
       </Card>
+
+      {focusedOpportunity ? (
+        <FocusedOpportunityPanel
+          opportunity={focusedOpportunity}
+          relatedTasks={focusedOpportunityTasks}
+          actionLink={{
+            href: getOpportunityFunnelHref(focusedOpportunity),
+            label: 'Abrir entidad en funnel',
+          }}
+        />
+      ) : null}
 
       <TasksTable
         tasks={filteredTasks}

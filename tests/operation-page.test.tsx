@@ -20,6 +20,8 @@ describe('OperationPage', () => {
     const html = renderToStaticMarkup(<OperationPage snapshot={snapshot} search="?entity=Camara+Comercio+Demo" />)
 
     expect(html).toContain('Entidad: Camara Comercio Demo')
+    expect(html).toContain('Entidad enfocada')
     expect(html).toContain('Tareas · Camara Comercio Demo')
+    expect(html).toContain('Abrir entidad en funnel')
   })
 })

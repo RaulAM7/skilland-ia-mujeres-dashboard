@@ -8,6 +8,7 @@ import { FunnelStageTable } from '../components/funnel-stage-table'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { OpportunitiesTable } from '../components/opportunities-table'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
+import { getOpportunityOperationHref } from '../lib/entity-links'
 import { filterOpportunities } from '../lib/filter-opportunities'
 import { getFunnelFiltersFromSearch, getFunnelHref, hasActiveFunnelFilters } from '../lib/funnel-route-filter'
 import { getRelatedTasksForOpportunity } from '../lib/opportunity-related-tasks'
@@ -177,7 +178,14 @@ export function FunnelPage({
       </Card>
 
       {focusedOpportunity ? (
-        <FocusedOpportunityPanel opportunity={focusedOpportunity} relatedTasks={focusedOpportunityTasks} />
+        <FocusedOpportunityPanel
+          opportunity={focusedOpportunity}
+          relatedTasks={focusedOpportunityTasks}
+          actionLink={{
+            href: getOpportunityOperationHref(focusedOpportunity),
+            label: 'Abrir entidad en operacion',
+          }}
+        />
       ) : null}
 
       <OpportunitiesTable
