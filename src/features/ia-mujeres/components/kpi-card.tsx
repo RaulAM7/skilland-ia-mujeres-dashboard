@@ -1,5 +1,8 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
+import { cn } from '@/lib/utils'
+import { getKpiCardHref } from '../lib/kpi-card-links'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 type KpiCardData = IaMujeresDashboardSnapshot['kpiCards'][number]
@@ -7,8 +10,9 @@ type KpiCardData = IaMujeresDashboardSnapshot['kpiCards'][number]
 export function KpiCard({ card }: { card: KpiCardData }) {
   const TrendIcon =
     card.trend?.direction === 'up' ? ArrowUpRight : card.trend?.direction === 'down' ? ArrowDownRight : ArrowRight
+  const href = getKpiCardHref(card.key)
 
-  return (
+  const cardContent = (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-muted-foreground">{card.title}</CardTitle>
@@ -24,5 +28,28 @@ export function KpiCard({ card }: { card: KpiCardData }) {
         ) : null}
       </CardContent>
     </Card>
+  )
+
+  if (!href) {
+    return cardContent
+  }
+
+  return (
+    <a
+      href={href}
+      onClick={(event) => {
+        if (!shouldHandleAppNavigation({ event, href, locationOrigin: window.location.origin })) {
+          return
+        }
+
+        event.preventDefault()
+        navigateAppTo(href)
+      }}
+      className={cn(
+        'block rounded-lg outline-none transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+      )}
+    >
+      {cardContent}
+    </a>
   )
 }
