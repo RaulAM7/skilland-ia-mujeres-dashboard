@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { OpportunitiesTable } from '../components/opportunities-table'
+import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { TasksTable } from '../components/tasks-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
@@ -26,6 +27,8 @@ export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsh
         <Metric title="Para hoy" value={snapshot.totals.dueTodayTasks} />
         <Metric title="Follow-ups" value={snapshot.totals.followupsPending} />
       </section>
+
+      <SnapshotHealthBanner snapshot={snapshot} />
 
       <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <NextActionsPanel snapshot={snapshot} />

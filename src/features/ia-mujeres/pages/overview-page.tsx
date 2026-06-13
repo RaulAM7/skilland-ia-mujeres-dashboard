@@ -2,6 +2,7 @@ import { AlertsPanel } from '../components/alerts-panel'
 import { KpiCard } from '../components/kpi-card'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { NextActionsPanel } from '../components/next-actions-panel'
+import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { SnapshotStatusBadge } from '../components/snapshot-status-badge'
 import { TasksTable } from '../components/tasks-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
@@ -24,6 +25,8 @@ export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsho
           <KpiCard key={card.key} card={card} />
         ))}
       </section>
+
+      <SnapshotHealthBanner snapshot={snapshot} />
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <LazyFunnelStageChart stages={snapshot.funnelStages} />

@@ -1,6 +1,7 @@
 import { FunnelStageTable } from '../components/funnel-stage-table'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { OpportunitiesTable } from '../components/opportunities-table'
+import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function FunnelPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }) {
@@ -12,6 +13,8 @@ export function FunnelPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot 
           Distribucion por stage comercial y oportunidades representativas del mock.
         </p>
       </section>
+
+      <SnapshotHealthBanner snapshot={snapshot} />
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <LazyFunnelStageChart stages={snapshot.funnelStages} />
