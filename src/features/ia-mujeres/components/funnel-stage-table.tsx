@@ -30,6 +30,13 @@ export function FunnelStageTable({ stages }: { stages: IaMujeresDashboardSnapsho
             </TableRow>
           </TableHeader>
           <TableBody>
+            {stages.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                  No hay stages disponibles en el snapshot actual.
+                </TableCell>
+              </TableRow>
+            ) : null}
             {stages.map((stage) => (
               <TableRow key={stage.key}>
                 <TableCell className="font-medium">{stage.label}</TableCell>

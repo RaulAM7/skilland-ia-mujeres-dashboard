@@ -33,7 +33,11 @@ export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsh
       </section>
 
       <TasksTable tasks={snapshot.tasks} />
-      <OpportunitiesTable opportunities={manualReview} />
+      <OpportunitiesTable
+        opportunities={manualReview}
+        title="Revision manual y señales tecnicas"
+        emptyMessage="No hay oportunidades en revision manual ni incidencias tecnicas pendientes."
+      />
     </div>
   )
 }

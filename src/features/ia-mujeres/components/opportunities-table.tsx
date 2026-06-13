@@ -5,13 +5,17 @@ import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function OpportunitiesTable({
   opportunities,
+  title = 'Oportunidades representativas',
+  emptyMessage = 'No hay oportunidades para mostrar en este momento.',
 }: {
   opportunities: IaMujeresDashboardSnapshot['opportunities']
+  title?: string
+  emptyMessage?: string
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Oportunidades representativas</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="overflow-x-auto">
         <Table>
@@ -25,6 +29,13 @@ export function OpportunitiesTable({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {opportunities.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                  {emptyMessage}
+                </TableCell>
+              </TableRow>
+            ) : null}
             {opportunities.map((opportunity) => (
               <TableRow key={opportunity.id}>
                 <TableCell>

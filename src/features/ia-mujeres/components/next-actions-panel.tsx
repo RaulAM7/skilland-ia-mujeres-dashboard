@@ -20,6 +20,9 @@ export function NextActionsPanel({ snapshot }: { snapshot: IaMujeresDashboardSna
         <CardTitle>Que toca hoy</CardTitle>
       </CardHeader>
       <CardContent>
+        {actions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No hay acciones prioritarias calculadas para este snapshot.</p>
+        ) : null}
         <ol className="space-y-3">
           {actions.map((action, index) => (
             <li key={action} className="flex gap-3 text-sm">

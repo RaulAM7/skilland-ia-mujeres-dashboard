@@ -10,7 +10,13 @@ const statusVariant = {
   blocked: 'warning',
 } as const
 
-export function TasksTable({ tasks }: { tasks: IaMujeresDashboardSnapshot['tasks'] }) {
+export function TasksTable({
+  tasks,
+  emptyMessage = 'No hay tareas para mostrar en este momento.',
+}: {
+  tasks: IaMujeresDashboardSnapshot['tasks']
+  emptyMessage?: string
+}) {
   return (
     <Card>
       <CardHeader>
@@ -28,6 +34,13 @@ export function TasksTable({ tasks }: { tasks: IaMujeresDashboardSnapshot['tasks
             </TableRow>
           </TableHeader>
           <TableBody>
+            {tasks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                  {emptyMessage}
+                </TableCell>
+              </TableRow>
+            ) : null}
             {tasks.map((task) => (
               <TableRow key={task.id}>
                 <TableCell className="min-w-72 font-medium">{task.title}</TableCell>
