@@ -120,6 +120,7 @@ Before launching a long autonomous `/goal` run or enabling real CRM mode, use:
 - `04_outputs/architecture/2026-06-13_human_decision_checklist.md`
 - `04_outputs/architecture/2026-06-13_pre_goal_autonomy_protocol.md`
 - `04_outputs/architecture/2026-06-13_goal_ready_prompt.md`
+- `04_outputs/architecture/2026-06-13_progress_handoff.md`
 
 ## Scaffold
 
