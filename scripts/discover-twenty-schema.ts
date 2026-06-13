@@ -50,7 +50,7 @@ async function main() {
       missingEnv: env.missing,
     }
     await writeJsonOutput(RAW_OUTPUT, payload)
-    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(generatedAt, env.missing))
+    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(env.missing))
     console.log(`SKIPPED Twenty schema discovery: missing ${env.missing.join(', ')}.`)
     return
   }
@@ -73,10 +73,8 @@ async function main() {
   }
 }
 
-function renderSkippedSummary(generatedAt: string, missing: string[]) {
+function renderSkippedSummary(missing: string[]) {
   return `# Twenty Schema Discovery Summary
-
-Generated at: ${generatedAt}
 
 Status: skipped
 

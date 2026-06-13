@@ -37,7 +37,7 @@ async function main() {
       campaignKey: env.campaignKey,
     }
     await writeJsonOutput(RAW_OUTPUT, payload)
-    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(generatedAt, env.missing))
+    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(env.missing))
     console.log(`SKIPPED IA Mujeres CRM probe: missing ${env.missing.join(', ')}.`)
     return
   }
@@ -95,10 +95,8 @@ async function main() {
   console.log(`IA Mujeres CRM probe summary written to ${SUMMARY_OUTPUT}.`)
 }
 
-function renderSkippedSummary(generatedAt: string, missing: string[]) {
+function renderSkippedSummary(missing: string[]) {
   return `# IA Mujeres CRM Probe Summary
-
-Generated at: ${generatedAt}
 
 Status: skipped
 

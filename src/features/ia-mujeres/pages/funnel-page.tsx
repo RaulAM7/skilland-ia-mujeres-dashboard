@@ -1,5 +1,5 @@
-import { FunnelStageChart } from '../components/funnel-stage-chart'
 import { FunnelStageTable } from '../components/funnel-stage-table'
+import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { OpportunitiesTable } from '../components/opportunities-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
@@ -14,7 +14,7 @@ export function FunnelPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot 
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <FunnelStageChart stages={snapshot.funnelStages} />
+        <LazyFunnelStageChart stages={snapshot.funnelStages} />
         <FunnelStageTable stages={snapshot.funnelStages} />
       </section>
 
