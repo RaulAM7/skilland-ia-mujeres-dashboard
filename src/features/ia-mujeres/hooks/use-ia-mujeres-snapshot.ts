@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
+import { loadDashboardSnapshot } from './load-dashboard-snapshot'
 
 type SnapshotState = {
   data: IaMujeresDashboardSnapshot | null
   loading: boolean
   error: string | null
+  transportWarning: string | null
 }
 
 export function useIaMujeresSnapshot() {
@@ -12,6 +14,7 @@ export function useIaMujeresSnapshot() {
     data: null,
     loading: true,
     error: null,
+    transportWarning: null,
   })
 
   useEffect(() => {
@@ -19,17 +22,14 @@ export function useIaMujeresSnapshot() {
 
     async function loadSnapshot() {
       try {
-        const [response, { parseDashboardSnapshot }] = await Promise.all([
-          fetch('/api/ia-mujeres/snapshot'),
-          import('../types/parse-dashboard-snapshot'),
-        ])
-        const json = parseDashboardSnapshot(await response.json())
+        const result = await loadDashboardSnapshot()
 
         if (!cancelled) {
           setState({
-            data: json,
+            data: result.data,
             loading: false,
-            error: response.ok ? null : `Snapshot endpoint returned ${response.status}`,
+            error: null,
+            transportWarning: result.transportWarning,
           })
         }
       } catch (error) {
@@ -38,6 +38,7 @@ export function useIaMujeresSnapshot() {
             data: null,
             loading: false,
             error: error instanceof Error ? error.message : 'Unknown snapshot fetch error',
+            transportWarning: null,
           })
         }
       }

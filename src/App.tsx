@@ -9,13 +9,14 @@ import { useIaMujeresSnapshot } from '@/features/ia-mujeres/hooks/use-ia-mujeres
 
 export default function App() {
   const pathname = usePathname()
-  const { data, loading, error } = useIaMujeresSnapshot()
+  const { data, loading, error, transportWarning } = useIaMujeresSnapshot()
   const route = pathname === '/' ? '/ia-mujeres' : pathname
 
   return (
     <AppLayout pathname={route}>
       {loading ? <LoadingState /> : null}
-      {!loading && error ? <ErrorState message={error} /> : null}
+      {!loading && error && !data ? <ErrorState message={error} /> : null}
+      {!loading && data && transportWarning ? <TransportWarningState message={transportWarning} /> : null}
       {!loading && data ? renderRoute(route, data) : null}
     </AppLayout>
   )
@@ -40,6 +41,14 @@ function ErrorState({ message }: { message: string }) {
   return (
     <Card className="border-rose-200 bg-rose-50">
       <CardContent className="p-6 text-sm text-rose-800">{message}</CardContent>
+    </Card>
+  )
+}
+
+function TransportWarningState({ message }: { message: string }) {
+  return (
+    <Card className="border-amber-200 bg-amber-50">
+      <CardContent className="p-6 text-sm text-amber-900">{message}</CardContent>
     </Card>
   )
 }
