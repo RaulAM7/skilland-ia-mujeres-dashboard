@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { DashboardOpportunity, DashboardTask } from '../types/dashboard-snapshot'
 
 export function FocusedOpportunityPanel({
@@ -22,7 +23,7 @@ export function FocusedOpportunityPanel({
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge variant={opportunity.technicalEmailOutcome === 'bounced' ? 'danger' : 'muted'}>
-            {opportunity.technicalEmailOutcome ?? 'unknown'}
+            {getTechnicalOutcomeLabel(opportunity.technicalEmailOutcome)}
           </Badge>
           {opportunity.entityType ? <Badge variant="muted">{opportunity.entityType}</Badge> : null}
           {opportunity.icp ? <Badge variant="muted">{opportunity.icp}</Badge> : null}

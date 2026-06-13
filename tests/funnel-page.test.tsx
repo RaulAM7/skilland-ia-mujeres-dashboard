@@ -14,8 +14,8 @@ describe('FunnelPage', () => {
 
     expect(html).toContain('Limpiar filtros')
     expect(html).toContain('Busqueda: universidad')
-    expect(html).toContain('Stage: NOT_SENT')
-    expect(html).toContain('Outcome: not_attempted')
+    expect(html).toContain('Stage: Sin contactar')
+    expect(html).toContain('Outcome: No intentado')
   })
 
   it('surfaces a focused entity panel when one opportunity remains after filtering', () => {

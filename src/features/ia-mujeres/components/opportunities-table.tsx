@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function OpportunitiesTable({
@@ -45,7 +46,7 @@ export function OpportunitiesTable({
                 <TableCell>{opportunity.commercialStageLabel}</TableCell>
                 <TableCell>
                   <Badge variant={opportunity.technicalEmailOutcome === 'bounced' ? 'danger' : 'muted'}>
-                    {opportunity.technicalEmailOutcome ?? 'unknown'}
+                    {getTechnicalOutcomeLabel(opportunity.technicalEmailOutcome)}
                   </Badge>
                 </TableCell>
                 <TableCell>{opportunity.nextActionLabel ?? 'Sin proxima accion'}</TableCell>

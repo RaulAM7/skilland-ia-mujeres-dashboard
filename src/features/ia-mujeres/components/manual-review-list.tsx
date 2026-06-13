@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
 import { getOpportunityFunnelHref } from '../lib/entity-links'
+import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 type ManualReviewOpportunity = IaMujeresDashboardSnapshot['opportunities'][number]
@@ -57,7 +58,7 @@ export function ManualReviewList({
 
                   <div className="flex flex-wrap gap-2">
                     <Badge variant={opportunity.technicalEmailOutcome === 'bounced' ? 'danger' : 'warning'}>
-                      {opportunity.technicalEmailOutcome ?? 'unknown'}
+                      {getTechnicalOutcomeLabel(opportunity.technicalEmailOutcome)}
                     </Badge>
                     {opportunity.entityType ? <Badge variant="muted">{opportunity.entityType}</Badge> : null}
                   </div>

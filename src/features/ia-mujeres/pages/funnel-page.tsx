@@ -11,6 +11,7 @@ import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { filterOpportunities } from '../lib/filter-opportunities'
 import { getFunnelFiltersFromSearch, getFunnelHref, hasActiveFunnelFilters } from '../lib/funnel-route-filter'
 import { getRelatedTasksForOpportunity } from '../lib/opportunity-related-tasks'
+import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function FunnelPage({
@@ -43,8 +44,10 @@ export function FunnelPage({
 
   const activeFilterLabels = [
     search.trim() ? `Busqueda: ${search.trim()}` : null,
-    stageKey !== 'all' ? `Stage: ${stageKey}` : null,
-    technicalOutcome !== 'all' ? `Outcome: ${technicalOutcome}` : null,
+    stageKey !== 'all'
+      ? `Stage: ${snapshot.funnelStages.find((stage) => stage.key === stageKey)?.label ?? stageKey}`
+      : null,
+    technicalOutcome !== 'all' ? `Outcome: ${getTechnicalOutcomeLabel(technicalOutcome)}` : null,
   ].filter(Boolean) as string[]
 
   const syncRoute = (nextFilters: { search: string; stageKey: string; technicalOutcome: string }) => {
@@ -163,11 +166,11 @@ export function FunnelPage({
               >
                 <option value="all">Todos los outcomes</option>
                 {technicalOutcomes.map((outcome) => (
-                  <option key={outcome} value={outcome}>
-                    {outcome}
-                  </option>
-                ))}
-              </select>
+                <option key={outcome} value={outcome}>
+                  {getTechnicalOutcomeLabel(outcome)}
+                </option>
+              ))}
+            </select>
             </label>
           </div>
         </CardContent>
