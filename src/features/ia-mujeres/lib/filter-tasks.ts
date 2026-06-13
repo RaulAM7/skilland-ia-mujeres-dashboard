@@ -19,7 +19,7 @@ export function filterTasks(
     }
   })()
 
-  return [...filtered].sort(compareTasks)
+  return sortTasksByUrgency(filtered)
 }
 
 export function getTaskQueueLabel(filter: TaskQueueFilter) {
@@ -46,6 +46,10 @@ export function getTaskQueueEmptyMessage(filter: TaskQueueFilter) {
     default:
       return 'No hay tareas para mostrar en este momento.'
   }
+}
+
+export function sortTasksByUrgency(tasks: IaMujeresDashboardSnapshot['tasks']) {
+  return [...tasks].sort(compareTasks)
 }
 
 function compareTasks(left: IaMujeresDashboardSnapshot['tasks'][number], right: IaMujeresDashboardSnapshot['tasks'][number]) {

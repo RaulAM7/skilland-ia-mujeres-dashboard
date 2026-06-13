@@ -17,4 +17,15 @@ describe('FunnelPage', () => {
     expect(html).toContain('Stage: NOT_SENT')
     expect(html).toContain('Outcome: not_attempted')
   })
+
+  it('surfaces a focused entity panel when one opportunity remains after filtering', () => {
+    const snapshot = parseDashboardSnapshot(mockSnapshot)
+
+    const html = renderToStaticMarkup(<FunnelPage snapshot={snapshot} search="?q=Camara+Comercio+Demo" />)
+
+    expect(html).toContain('Entidad enfocada')
+    expect(html).toContain('Camara Comercio Demo')
+    expect(html).toContain('Tareas relacionadas')
+    expect(html).toContain('Preparar follow-up 1 para Camara Comercio Demo')
+  })
 })

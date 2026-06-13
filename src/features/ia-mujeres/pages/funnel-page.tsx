@@ -3,12 +3,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { navigateAppTo } from '@/lib/app-navigation'
+import { FocusedOpportunityPanel } from '../components/focused-opportunity-panel'
 import { FunnelStageTable } from '../components/funnel-stage-table'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { OpportunitiesTable } from '../components/opportunities-table'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { filterOpportunities } from '../lib/filter-opportunities'
 import { getFunnelFiltersFromSearch, getFunnelHref, hasActiveFunnelFilters } from '../lib/funnel-route-filter'
+import { getRelatedTasksForOpportunity } from '../lib/opportunity-related-tasks'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function FunnelPage({
@@ -30,6 +32,8 @@ export function FunnelPage({
   const technicalOutcomes = Array.from(
     new Set(snapshot.opportunities.map((opportunity) => opportunity.technicalEmailOutcome ?? 'unknown')),
   ).sort((left, right) => left.localeCompare(right))
+  const focusedOpportunity = filteredOpportunities.length === 1 ? filteredOpportunities[0] : undefined
+  const focusedOpportunityTasks = focusedOpportunity ? getRelatedTasksForOpportunity(snapshot.tasks, focusedOpportunity) : []
 
   useEffect(() => {
     setSearch(routeFilters.search)
@@ -100,74 +104,78 @@ export function FunnelPage({
           ) : null}
 
           <div className="grid gap-3 md:grid-cols-[1.4fr_0.8fr_0.8fr]">
-          <label className="space-y-1">
-            <span className="text-xs font-medium text-muted-foreground">Buscar entidad o contexto</span>
-            <input
-              value={search}
-              onChange={(event) => {
-                const nextSearch = event.target.value
-                setSearch(nextSearch)
-                syncRoute({
-                  search: nextSearch,
-                  stageKey,
-                  technicalOutcome,
-                })
-              }}
-              placeholder="Ej. universidad, ayuntamiento, follow-up"
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
-            />
-          </label>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-muted-foreground">Buscar entidad o contexto</span>
+              <input
+                value={search}
+                onChange={(event) => {
+                  const nextSearch = event.target.value
+                  setSearch(nextSearch)
+                  syncRoute({
+                    search: nextSearch,
+                    stageKey,
+                    technicalOutcome,
+                  })
+                }}
+                placeholder="Ej. universidad, ayuntamiento, follow-up"
+                className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+              />
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-xs font-medium text-muted-foreground">Stage comercial</span>
-            <select
-              value={stageKey}
-              onChange={(event) => {
-                const nextStageKey = event.target.value
-                setStageKey(nextStageKey)
-                syncRoute({
-                  search,
-                  stageKey: nextStageKey,
-                  technicalOutcome,
-                })
-              }}
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors focus:border-primary"
-            >
-              <option value="all">Todos los stages</option>
-              {snapshot.funnelStages.map((stage) => (
-                <option key={stage.key} value={stage.key}>
-                  {stage.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-muted-foreground">Stage comercial</span>
+              <select
+                value={stageKey}
+                onChange={(event) => {
+                  const nextStageKey = event.target.value
+                  setStageKey(nextStageKey)
+                  syncRoute({
+                    search,
+                    stageKey: nextStageKey,
+                    technicalOutcome,
+                  })
+                }}
+                className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors focus:border-primary"
+              >
+                <option value="all">Todos los stages</option>
+                {snapshot.funnelStages.map((stage) => (
+                  <option key={stage.key} value={stage.key}>
+                    {stage.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label className="space-y-1">
-            <span className="text-xs font-medium text-muted-foreground">Outcome tecnico</span>
-            <select
-              value={technicalOutcome}
-              onChange={(event) => {
-                const nextTechnicalOutcome = event.target.value
-                setTechnicalOutcome(nextTechnicalOutcome)
-                syncRoute({
-                  search,
-                  stageKey,
-                  technicalOutcome: nextTechnicalOutcome,
-                })
-              }}
-              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors focus:border-primary"
-            >
-              <option value="all">Todos los outcomes</option>
-              {technicalOutcomes.map((outcome) => (
-                <option key={outcome} value={outcome}>
-                  {outcome}
-                </option>
-              ))}
-            </select>
-          </label>
+            <label className="space-y-1">
+              <span className="text-xs font-medium text-muted-foreground">Outcome tecnico</span>
+              <select
+                value={technicalOutcome}
+                onChange={(event) => {
+                  const nextTechnicalOutcome = event.target.value
+                  setTechnicalOutcome(nextTechnicalOutcome)
+                  syncRoute({
+                    search,
+                    stageKey,
+                    technicalOutcome: nextTechnicalOutcome,
+                  })
+                }}
+                className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors focus:border-primary"
+              >
+                <option value="all">Todos los outcomes</option>
+                {technicalOutcomes.map((outcome) => (
+                  <option key={outcome} value={outcome}>
+                    {outcome}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
         </CardContent>
       </Card>
+
+      {focusedOpportunity ? (
+        <FocusedOpportunityPanel opportunity={focusedOpportunity} relatedTasks={focusedOpportunityTasks} />
+      ) : null}
 
       <OpportunitiesTable
         opportunities={filteredOpportunities}
