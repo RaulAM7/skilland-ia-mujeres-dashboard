@@ -1,6 +1,6 @@
 # IA Mujeres CRM Probe Summary
 
-Generated at: 2026-06-12T13:04:24.792Z
+Generated at: 2026-06-13T11:56:17.784Z
 
 Status: skipped
 

@@ -112,6 +112,15 @@ Read-only rules:
 - If no reliable IA Mujeres campaign filter is confirmed, the dashboard must not read global CRM data as if it were campaign data.
 - Because this repository is public, committed summaries must not include real people, emails, phones, notes, snippets, thread ids, record payloads or real organization names from CRM.
 
+## Human preflight before CRM mode
+
+Before launching a long autonomous `/goal` run or enabling real CRM mode, use:
+
+- `04_outputs/architecture/2026-06-13_human_secrets_preflight.md`
+- `04_outputs/architecture/2026-06-13_human_decision_checklist.md`
+- `04_outputs/architecture/2026-06-13_pre_goal_autonomy_protocol.md`
+- `04_outputs/architecture/2026-06-13_goal_ready_prompt.md`
+
 ## Scaffold
 
 The project still follows the repo harness:
