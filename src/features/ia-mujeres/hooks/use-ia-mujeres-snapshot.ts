@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 import { loadDashboardSnapshot } from './load-dashboard-snapshot'
-
-type SnapshotState = {
-  data: IaMujeresDashboardSnapshot | null
-  loading: boolean
-  refreshing: boolean
-  error: string | null
-  transportWarning: string | null
-}
+import {
+  createSnapshotLoadErrorState,
+  createSnapshotLoadStartState,
+  createSnapshotLoadSuccessState,
+  shouldApplySnapshotLoadResult,
+  type SnapshotState,
+} from './snapshot-load-state'
 
 export function useIaMujeresSnapshot() {
   const isMountedRef = useRef(true)
+  const latestRequestIdRef = useRef(0)
   const [state, setState] = useState<SnapshotState>({
     data: null,
     loading: true,
@@ -22,36 +21,37 @@ export function useIaMujeresSnapshot() {
 
   async function runLoad(options?: { preserveData?: boolean }) {
     const preserveData = options?.preserveData ?? false
+    const requestId = latestRequestIdRef.current + 1
+    latestRequestIdRef.current = requestId
 
-    setState((current) => ({
-      ...current,
-      loading: preserveData ? current.loading : !current.data,
-      refreshing: preserveData && Boolean(current.data),
-      error: preserveData ? current.error : null,
-    }))
+    setState((current) => createSnapshotLoadStartState(current, preserveData))
 
     try {
       const result = await loadDashboardSnapshot()
 
-      if (!isMountedRef.current) return
+      if (
+        !shouldApplySnapshotLoadResult({
+          isMounted: isMountedRef.current,
+          latestRequestId: latestRequestIdRef.current,
+          requestId,
+        })
+      ) {
+        return
+      }
 
-      setState({
-        data: result.data,
-        loading: false,
-        refreshing: false,
-        error: null,
-        transportWarning: result.transportWarning,
-      })
+      setState(createSnapshotLoadSuccessState(result))
     } catch (error) {
-      if (!isMountedRef.current) return
+      if (
+        !shouldApplySnapshotLoadResult({
+          isMounted: isMountedRef.current,
+          latestRequestId: latestRequestIdRef.current,
+          requestId,
+        })
+      ) {
+        return
+      }
 
-      setState((current) => ({
-        data: preserveData ? current.data : null,
-        loading: false,
-        refreshing: false,
-        error: error instanceof Error ? error.message : 'Unknown snapshot fetch error',
-        transportWarning: preserveData ? current.transportWarning : null,
-      }))
+      setState((current) => createSnapshotLoadErrorState(current, preserveData, error))
     }
   }
 
