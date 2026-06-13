@@ -6,16 +6,20 @@ export function filterTasks(
   tasks: IaMujeresDashboardSnapshot['tasks'],
   filter: TaskQueueFilter,
 ) {
-  switch (filter) {
-    case 'overdue':
-      return tasks.filter((task) => task.status === 'overdue')
-    case 'followup':
-      return tasks.filter((task) => task.category === 'followup')
-    case 'review':
-      return tasks.filter((task) => task.category === 'manual_review' || task.category === 'data_quality')
-    default:
-      return tasks
-  }
+  const filtered = (() => {
+    switch (filter) {
+      case 'overdue':
+        return tasks.filter((task) => task.status === 'overdue')
+      case 'followup':
+        return tasks.filter((task) => task.category === 'followup')
+      case 'review':
+        return tasks.filter((task) => task.category === 'manual_review' || task.category === 'data_quality')
+      default:
+        return tasks
+    }
+  })()
+
+  return [...filtered].sort(compareTasks)
 }
 
 export function getTaskQueueLabel(filter: TaskQueueFilter) {
@@ -42,4 +46,37 @@ export function getTaskQueueEmptyMessage(filter: TaskQueueFilter) {
     default:
       return 'No hay tareas para mostrar en este momento.'
   }
+}
+
+function compareTasks(left: IaMujeresDashboardSnapshot['tasks'][number], right: IaMujeresDashboardSnapshot['tasks'][number]) {
+  return compareTaskStatus(left.status, right.status) || compareDates(left.dueAt, right.dueAt) || left.title.localeCompare(right.title)
+}
+
+function compareTaskStatus(left: string, right: string) {
+  return getTaskStatusPriority(left) - getTaskStatusPriority(right)
+}
+
+function getTaskStatusPriority(status: string) {
+  switch (status) {
+    case 'overdue':
+      return 0
+    case 'open':
+      return 1
+    case 'blocked':
+      return 2
+    case 'done':
+      return 3
+    default:
+      return 4
+  }
+}
+
+function compareDates(left: string | undefined, right: string | undefined) {
+  if (left && right) {
+    return new Date(left).getTime() - new Date(right).getTime()
+  }
+
+  if (left) return -1
+  if (right) return 1
+  return 0
 }

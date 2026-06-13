@@ -27,6 +27,36 @@ describe('filterTasks', () => {
     expect(filtered.every((task) => task.category === 'manual_review' || task.category === 'data_quality')).toBe(true)
   })
 
+  it('sorts tasks by urgency and due date within each queue', () => {
+    const filtered = filterTasks(
+      [
+        {
+          id: 'task-3',
+          title: 'Sin fecha',
+          status: 'open',
+          category: 'followup',
+        },
+        {
+          id: 'task-1',
+          title: 'Mas urgente',
+          status: 'overdue',
+          dueAt: '2026-06-12T08:00:00.000Z',
+          category: 'followup',
+        },
+        {
+          id: 'task-2',
+          title: 'Abierta con fecha',
+          status: 'open',
+          dueAt: '2026-06-12T09:00:00.000Z',
+          category: 'followup',
+        },
+      ],
+      'all',
+    )
+
+    expect(filtered.map((task) => task.id)).toEqual(['task-1', 'task-2', 'task-3'])
+  })
+
   it('exposes stable labels and empty messages', () => {
     expect(getTaskQueueLabel('followup')).toBe('Follow-ups de la muestra')
     expect(getTaskQueueEmptyMessage('review')).toContain('revision')

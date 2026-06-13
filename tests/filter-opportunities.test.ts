@@ -38,4 +38,44 @@ describe('filterOpportunities', () => {
     expect(filtered.length).toBeGreaterThan(0)
     expect(filtered.every((opportunity) => (opportunity.technicalEmailOutcome ?? 'unknown') === 'manual_review')).toBe(true)
   })
+
+  it('sorts filtered opportunities by next action date and entity label', () => {
+    const filtered = filterOpportunities(
+      [
+        {
+          id: 'opp-3',
+          name: 'Zulu',
+          companyName: 'Zulu',
+          commercialStage: 'NOT_SENT',
+          commercialStageLabel: 'Sin contactar',
+          technicalEmailOutcome: 'not_attempted',
+        },
+        {
+          id: 'opp-2',
+          name: 'Beta',
+          companyName: 'Beta',
+          commercialStage: 'NOT_SENT',
+          commercialStageLabel: 'Sin contactar',
+          technicalEmailOutcome: 'not_attempted',
+          nextActionAt: '2026-06-13T09:00:00.000Z',
+        },
+        {
+          id: 'opp-1',
+          name: 'Alpha',
+          companyName: 'Alpha',
+          commercialStage: 'NOT_SENT',
+          commercialStageLabel: 'Sin contactar',
+          technicalEmailOutcome: 'not_attempted',
+          nextActionAt: '2026-06-12T09:00:00.000Z',
+        },
+      ],
+      {
+        search: '',
+        stageKey: 'all',
+        technicalOutcome: 'all',
+      },
+    )
+
+    expect(filtered.map((opportunity) => opportunity.id)).toEqual(['opp-1', 'opp-2', 'opp-3'])
+  })
 })
