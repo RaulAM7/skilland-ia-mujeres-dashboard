@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AppLayout } from '@/components/layout/app-layout'
+import { APP_NAVIGATION_EVENT, normalizeAppPathname } from '@/lib/app-navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { DebugPage } from '@/features/ia-mujeres/pages/debug-page'
 import { FunnelPage } from '@/features/ia-mujeres/pages/funnel-page'
@@ -10,14 +11,13 @@ import { useIaMujeresSnapshot } from '@/features/ia-mujeres/hooks/use-ia-mujeres
 export default function App() {
   const pathname = usePathname()
   const { data, loading, error, transportWarning } = useIaMujeresSnapshot()
-  const route = pathname === '/' ? '/ia-mujeres' : pathname
 
   return (
-    <AppLayout pathname={route}>
+    <AppLayout pathname={pathname}>
       {loading ? <LoadingState /> : null}
       {!loading && error && !data ? <ErrorState message={error} /> : null}
       {!loading && data && transportWarning ? <TransportWarningState message={transportWarning} /> : null}
-      {!loading && data ? renderRoute(route, data) : null}
+      {!loading && data ? renderRoute(pathname, data) : null}
     </AppLayout>
   )
 }
@@ -54,12 +54,20 @@ function TransportWarningState({ message }: { message: string }) {
 }
 
 function usePathname() {
-  const [pathname, setPathname] = useState(() => window.location.pathname)
+  const [pathname, setPathname] = useState(() => normalizeAppPathname(window.location.pathname))
 
   useEffect(() => {
-    const onPopState = () => setPathname(window.location.pathname)
+    const syncPathname = () => setPathname(normalizeAppPathname(window.location.pathname))
+
+    const onPopState = () => syncPathname()
+    const onAppNavigate = () => syncPathname()
     window.addEventListener('popstate', onPopState)
-    return () => window.removeEventListener('popstate', onPopState)
+    window.addEventListener(APP_NAVIGATION_EVENT, onAppNavigate)
+
+    return () => {
+      window.removeEventListener('popstate', onPopState)
+      window.removeEventListener(APP_NAVIGATION_EVENT, onAppNavigate)
+    }
   }, [])
 
   return pathname

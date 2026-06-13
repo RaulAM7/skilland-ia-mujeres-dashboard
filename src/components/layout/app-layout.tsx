@@ -1,5 +1,6 @@
 import { Activity, BarChart3, Bug, ClipboardList, LayoutDashboard } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
 import { cn } from '@/lib/utils'
 
 const navigation = [
@@ -34,6 +35,15 @@ export function AppLayout({ children, pathname }: { children: ReactNode; pathnam
                 <a
                   key={item.href}
                   href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  onClick={(event) => {
+                    if (!shouldHandleAppNavigation({ event, href: item.href, locationOrigin: window.location.origin })) {
+                      return
+                    }
+
+                    event.preventDefault()
+                    navigateAppTo(item.href)
+                  }}
                   className={cn(
                     'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors',
                     active && 'bg-muted text-foreground',
@@ -72,6 +82,15 @@ export function AppLayout({ children, pathname }: { children: ReactNode; pathnam
                   <a
                     key={item.href}
                     href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    onClick={(event) => {
+                      if (!shouldHandleAppNavigation({ event, href: item.href, locationOrigin: window.location.origin })) {
+                        return
+                      }
+
+                      event.preventDefault()
+                      navigateAppTo(item.href)
+                    }}
                     className={cn(
                       'whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-muted-foreground',
                       active && 'bg-muted text-foreground',
