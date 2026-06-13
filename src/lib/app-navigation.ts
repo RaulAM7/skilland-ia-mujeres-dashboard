@@ -13,6 +13,7 @@ type NavigateDependencies = {
   dispatchEvent(event: Event): boolean
   history: {
     pushState(data: unknown, unused: string, url?: string | URL | null): void
+    replaceState(data: unknown, unused: string, url?: string | URL | null): void
   }
   location: {
     hash: string
@@ -49,6 +50,7 @@ export function shouldHandleAppNavigation(params: {
 export function navigateAppTo(
   href: string,
   dependencies: NavigateDependencies = getBrowserNavigationDependencies(),
+  options?: { historyMode?: 'push' | 'replace' },
 ) {
   const targetUrl = new URL(href, dependencies.location.origin)
   const currentUrl = `${dependencies.location.pathname}${dependencies.location.search}${dependencies.location.hash}`
@@ -58,7 +60,8 @@ export function navigateAppTo(
     return false
   }
 
-  dependencies.history.pushState({}, '', nextUrl)
+  const historyMethod = options?.historyMode === 'replace' ? dependencies.history.replaceState : dependencies.history.pushState
+  historyMethod.call(dependencies.history, {}, '', nextUrl)
   dependencies.dispatchEvent(new Event(APP_NAVIGATION_EVENT))
   return true
 }

@@ -35,12 +35,13 @@ describe('app navigation helpers', () => {
 
   it('pushes state and emits an app navigation event only when the path changes', () => {
     const pushState = vi.fn()
+    const replaceState = vi.fn()
     const dispatchEvent = vi.fn()
 
     expect(
       navigateAppTo('/ia-mujeres/funnel', {
         dispatchEvent,
-        history: { pushState },
+        history: { pushState, replaceState },
         location: {
           hash: '',
           origin: 'https://dashboard.example.com',
@@ -61,7 +62,7 @@ describe('app navigation helpers', () => {
     expect(
       navigateAppTo('/ia-mujeres/funnel', {
         dispatchEvent,
-        history: { pushState },
+        history: { pushState, replaceState },
         location: {
           hash: '',
           origin: 'https://dashboard.example.com',
@@ -77,12 +78,13 @@ describe('app navigation helpers', () => {
 
   it('treats query-string changes as a real navigation update', () => {
     const pushState = vi.fn()
+    const replaceState = vi.fn()
     const dispatchEvent = vi.fn()
 
     expect(
       navigateAppTo('/ia-mujeres/operation?filter=manual_review', {
         dispatchEvent,
-        history: { pushState },
+        history: { pushState, replaceState },
         location: {
           hash: '',
           origin: 'https://dashboard.example.com',
@@ -93,6 +95,33 @@ describe('app navigation helpers', () => {
     ).toBe(true)
 
     expect(pushState).toHaveBeenCalledWith({}, '', '/ia-mujeres/operation?filter=manual_review')
+    expect(dispatchEvent).toHaveBeenCalledTimes(1)
+  })
+
+  it('supports replaceState for transient filter updates', () => {
+    const pushState = vi.fn()
+    const replaceState = vi.fn()
+    const dispatchEvent = vi.fn()
+
+    expect(
+      navigateAppTo(
+        '/ia-mujeres/funnel?q=universidad',
+        {
+          dispatchEvent,
+          history: { pushState, replaceState },
+          location: {
+            hash: '',
+            origin: 'https://dashboard.example.com',
+            pathname: '/ia-mujeres/funnel',
+            search: '',
+          },
+        },
+        { historyMode: 'replace' },
+      ),
+    ).toBe(true)
+
+    expect(pushState).not.toHaveBeenCalled()
+    expect(replaceState).toHaveBeenCalledWith({}, '', '/ia-mujeres/funnel?q=universidad')
     expect(dispatchEvent).toHaveBeenCalledTimes(1)
   })
 })

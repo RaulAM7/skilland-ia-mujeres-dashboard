@@ -41,7 +41,7 @@ export default function App() {
 }
 
 function renderRoute(route: { pathname: string; search: string }, snapshot: NonNullable<ReturnType<typeof useIaMujeresSnapshot>['data']>) {
-  if (route.pathname === '/ia-mujeres/funnel') return <FunnelPage snapshot={snapshot} />
+  if (route.pathname === '/ia-mujeres/funnel') return <FunnelPage snapshot={snapshot} search={route.search} />
   if (route.pathname === '/ia-mujeres/operation') return <OperationPage snapshot={snapshot} search={route.search} />
   if (route.pathname === '/ia-mujeres/debug') return <DebugPage snapshot={snapshot} />
   return <OverviewPage snapshot={snapshot} />
