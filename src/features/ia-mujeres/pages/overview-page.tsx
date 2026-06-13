@@ -1,13 +1,17 @@
 import { AlertsPanel } from '../components/alerts-panel'
 import { KpiCard } from '../components/kpi-card'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
+import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { SnapshotStatusBadge } from '../components/snapshot-status-badge'
 import { TasksTable } from '../components/tasks-table'
+import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }) {
+  const manualReview = getManualReviewOpportunities(snapshot.opportunities).slice(0, 5)
+
   return (
     <div className="space-y-6">
       <section className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
@@ -37,6 +41,8 @@ export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsho
         <AlertsPanel alerts={snapshot.alerts} />
         <TasksTable tasks={snapshot.tasks.slice(0, 5)} />
       </section>
+
+      <ManualReviewList opportunities={manualReview} />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
 import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
+import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
 import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
@@ -11,12 +12,7 @@ import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }) {
   const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>('all')
-  const manualReview = snapshot.opportunities.filter(
-    (opportunity) =>
-      opportunity.commercialStage === 'WRONG_CONTACT_MANUAL_REVIEW' ||
-      opportunity.technicalEmailOutcome === 'manual_review' ||
-      opportunity.technicalEmailOutcome === 'bounced',
-  )
+  const manualReview = getManualReviewOpportunities(snapshot.opportunities)
   const filteredTasks = filterTasks(snapshot.tasks, taskFilter)
   const taskQueueOptions: Array<{ key: TaskQueueFilter; label: string; count: number }> = [
     { key: 'all', label: 'Todas', count: snapshot.tasks.length },
