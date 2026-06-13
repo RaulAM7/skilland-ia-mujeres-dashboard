@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CrmReadinessPanel } from '../components/crm-readiness-panel'
 import { DebugSnapshotPanel } from '../components/debug-snapshot-panel'
 import { SnapshotStatusBadge } from '../components/snapshot-status-badge'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
@@ -16,18 +17,22 @@ export function DebugPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }
         <DebugItem title="Status">
           <SnapshotStatusBadge status={snapshot.status} />
         </DebugItem>
+        <DebugItem title="Generated at">{new Date(snapshot.generatedAt).toLocaleString()}</DebugItem>
         <DebugItem title="Data mode">{snapshot.source.dataMode ?? 'unknown'}</DebugItem>
         <DebugItem title="Provider">
           <Badge variant="muted">{snapshot.source.crmProvider}</Badge>
         </DebugItem>
         <DebugItem title="Campaign">{snapshot.source.campaignKey}</DebugItem>
         <DebugItem title="Runtime verified">{String(snapshot.source.runtimeVerified ?? false)}</DebugItem>
+        <DebugItem title="Warnings">{snapshot.warnings.length}</DebugItem>
         <DebugItem title="CRM configured">
           {snapshot.source.crmConfigured === undefined ? 'n/a' : String(snapshot.source.crmConfigured)}
         </DebugItem>
         <DebugItem title="Records read">{snapshot.source.recordsRead ?? 0}</DebugItem>
         <DebugItem title="Schema discovery">{snapshot.source.schemaDiscovery?.status ?? 'not_run'}</DebugItem>
       </section>
+
+      <CrmReadinessPanel snapshot={snapshot} />
 
       {snapshot.source.lastError ? (
         <Card>
