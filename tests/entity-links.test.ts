@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getOpportunityFunnelHref, getTaskRelatedEntityHref } from '../src/features/ia-mujeres/lib/entity-links'
+import { getOpportunityFunnelHref, getOpportunityOperationHref, getTaskRelatedEntityHref } from '../src/features/ia-mujeres/lib/entity-links'
 import type { DashboardOpportunity, DashboardTask } from '../src/features/ia-mujeres/types/dashboard-snapshot'
 
 describe('entity links', () => {
@@ -16,6 +16,7 @@ describe('entity links', () => {
     expect(getOpportunityFunnelHref(opportunity)).toBe(
       '/ia-mujeres/funnel?q=Fundacion+Demo&stage=WRONG_CONTACT_MANUAL_REVIEW&outcome=manual_review',
     )
+    expect(getOpportunityOperationHref(opportunity)).toBe('/ia-mujeres/operation?entity=Fundacion+Demo')
   })
 
   it('builds a search-only funnel href for a related task entity', () => {

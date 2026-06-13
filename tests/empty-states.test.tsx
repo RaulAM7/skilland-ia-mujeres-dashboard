@@ -21,6 +21,26 @@ describe('empty states', () => {
     expect(html).toContain('No hay oportunidades en revision manual ni incidencias tecnicas pendientes.')
   })
 
+  it('renders a linked opportunity entity towards the operation view', () => {
+    const html = renderToStaticMarkup(
+      <OpportunitiesTable
+        opportunities={[
+          {
+            id: 'opp-entity',
+            name: 'Fundacion Demo',
+            companyName: 'Fundacion Demo',
+            commercialStage: 'NOT_SENT',
+            commercialStageLabel: 'Sin contactar',
+            technicalEmailOutcome: 'not_attempted',
+          },
+        ]}
+      />,
+    )
+
+    expect(html).toContain('href="/ia-mujeres/operation?entity=Fundacion+Demo"')
+    expect(html).toContain('Fundacion Demo')
+  })
+
   it('renders a message when no tasks are available', () => {
     const html = renderToStaticMarkup(<TasksTable tasks={[]} />)
 
