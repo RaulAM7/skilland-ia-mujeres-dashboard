@@ -1,4 +1,5 @@
 import { AlertsPanel } from '../components/alerts-panel'
+import { BatchesTable } from '../components/batches-table'
 import { KpiCard } from '../components/kpi-card'
 import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { ManualReviewList } from '../components/manual-review-list'
@@ -7,10 +8,12 @@ import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { SnapshotStatusBadge } from '../components/snapshot-status-badge'
 import { TasksTable } from '../components/tasks-table'
 import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
+import { getRecentBatches } from '../lib/recent-batches'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }) {
   const manualReview = getManualReviewOpportunities(snapshot.opportunities).slice(0, 5)
+  const recentBatches = getRecentBatches(snapshot.batches).slice(0, 5)
 
   return (
     <div className="space-y-6">
@@ -43,6 +46,8 @@ export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsho
       </section>
 
       <ManualReviewList opportunities={manualReview} />
+
+      <BatchesTable batches={recentBatches} />
     </div>
   )
 }

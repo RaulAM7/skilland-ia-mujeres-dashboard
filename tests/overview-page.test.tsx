@@ -12,5 +12,7 @@ describe('OverviewPage', () => {
 
     expect(html).toContain('Revision manual y senales tecnicas')
     expect(html).toContain('2 en cola')
+    expect(html).toContain('Lotes recientes de outreach')
+    expect(html).toContain('Mock batch email 1')
   })
 })

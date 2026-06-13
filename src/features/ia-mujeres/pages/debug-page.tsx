@@ -25,6 +25,7 @@ export function DebugPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }
         <DebugItem title="Campaign">{snapshot.source.campaignKey}</DebugItem>
         <DebugItem title="Runtime verified">{String(snapshot.source.runtimeVerified ?? false)}</DebugItem>
         <DebugItem title="Warnings">{snapshot.warnings.length}</DebugItem>
+        <DebugItem title="Batches">{snapshot.batches?.length ?? 0}</DebugItem>
         <DebugItem title="CRM configured">
           {snapshot.source.crmConfigured === undefined ? 'n/a' : String(snapshot.source.crmConfigured)}
         </DebugItem>
