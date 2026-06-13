@@ -12,12 +12,12 @@ import { OverviewPage } from '@/features/ia-mujeres/pages/overview-page'
 import { useIaMujeresSnapshot } from '@/features/ia-mujeres/hooks/use-ia-mujeres-snapshot'
 
 export default function App() {
-  const pathname = usePathname()
+  const route = useRoute()
   const { data, loading, refreshing, error, transportWarning, reload } = useIaMujeresSnapshot()
 
   return (
     <AppLayout
-      pathname={pathname}
+      pathname={route.pathname}
       headerActions={
         <Button
           variant="secondary"
@@ -35,15 +35,15 @@ export default function App() {
       {!loading && data && error ? <InlineErrorState message={error} /> : null}
       {!loading && error && !data ? <ErrorState message={error} /> : null}
       {!loading && data && transportWarning ? <TransportWarningState message={transportWarning} /> : null}
-      {!loading && data ? renderRoute(pathname, data) : null}
+      {!loading && data ? renderRoute(route, data) : null}
     </AppLayout>
   )
 }
 
-function renderRoute(route: string, snapshot: NonNullable<ReturnType<typeof useIaMujeresSnapshot>['data']>) {
-  if (route === '/ia-mujeres/funnel') return <FunnelPage snapshot={snapshot} />
-  if (route === '/ia-mujeres/operation') return <OperationPage snapshot={snapshot} />
-  if (route === '/ia-mujeres/debug') return <DebugPage snapshot={snapshot} />
+function renderRoute(route: { pathname: string; search: string }, snapshot: NonNullable<ReturnType<typeof useIaMujeresSnapshot>['data']>) {
+  if (route.pathname === '/ia-mujeres/funnel') return <FunnelPage snapshot={snapshot} />
+  if (route.pathname === '/ia-mujeres/operation') return <OperationPage snapshot={snapshot} search={route.search} />
+  if (route.pathname === '/ia-mujeres/debug') return <DebugPage snapshot={snapshot} />
   return <OverviewPage snapshot={snapshot} />
 }
 
@@ -79,14 +79,14 @@ function TransportWarningState({ message }: { message: string }) {
   )
 }
 
-function usePathname() {
-  const [pathname, setPathname] = useState(() => normalizeAppPathname(window.location.pathname))
+function useRoute() {
+  const [route, setRoute] = useState(() => getCurrentRoute())
 
   useEffect(() => {
-    const syncPathname = () => setPathname(normalizeAppPathname(window.location.pathname))
+    const syncRoute = () => setRoute(getCurrentRoute())
 
-    const onPopState = () => syncPathname()
-    const onAppNavigate = () => syncPathname()
+    const onPopState = () => syncRoute()
+    const onAppNavigate = () => syncRoute()
     window.addEventListener('popstate', onPopState)
     window.addEventListener(APP_NAVIGATION_EVENT, onAppNavigate)
 
@@ -96,5 +96,12 @@ function usePathname() {
     }
   }, [])
 
-  return pathname
+  return route
+}
+
+function getCurrentRoute() {
+  return {
+    pathname: normalizeAppPathname(window.location.pathname),
+    search: window.location.search,
+  }
 }

@@ -74,4 +74,25 @@ describe('app navigation helpers', () => {
     expect(pushState).not.toHaveBeenCalled()
     expect(dispatchEvent).not.toHaveBeenCalled()
   })
+
+  it('treats query-string changes as a real navigation update', () => {
+    const pushState = vi.fn()
+    const dispatchEvent = vi.fn()
+
+    expect(
+      navigateAppTo('/ia-mujeres/operation?filter=manual_review', {
+        dispatchEvent,
+        history: { pushState },
+        location: {
+          hash: '',
+          origin: 'https://dashboard.example.com',
+          pathname: '/ia-mujeres/operation',
+          search: '',
+        },
+      }),
+    ).toBe(true)
+
+    expect(pushState).toHaveBeenCalledWith({}, '', '/ia-mujeres/operation?filter=manual_review')
+    expect(dispatchEvent).toHaveBeenCalledTimes(1)
+  })
 })

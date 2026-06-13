@@ -1,17 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { navigateAppTo } from '@/lib/app-navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
 import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
 import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
+import { getOperationHrefForTaskFilter, getTaskFilterFromSearch } from '../lib/operation-route-filter'
 import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { TasksTable } from '../components/tasks-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
-export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapshot }) {
-  const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>('all')
+export function OperationPage({
+  snapshot,
+  search = '',
+}: {
+  snapshot: IaMujeresDashboardSnapshot
+  search?: string
+}) {
+  const routeFilter = useMemo(() => getTaskFilterFromSearch(search), [search])
+  const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>(routeFilter)
   const manualReview = getManualReviewOpportunities(snapshot.opportunities)
   const filteredTasks = filterTasks(snapshot.tasks, taskFilter)
   const taskQueueOptions: Array<{ key: TaskQueueFilter; label: string; count: number }> = [
@@ -20,6 +29,10 @@ export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsh
     { key: 'followup', label: 'Follow-up', count: filterTasks(snapshot.tasks, 'followup').length },
     { key: 'review', label: 'Revision', count: filterTasks(snapshot.tasks, 'review').length },
   ]
+
+  useEffect(() => {
+    setTaskFilter(routeFilter)
+  }, [routeFilter])
 
   return (
     <div className="space-y-6">
@@ -56,7 +69,10 @@ export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsh
             <Button
               key={option.key}
               variant={taskFilter === option.key ? 'default' : 'secondary'}
-              onClick={() => setTaskFilter(option.key)}
+              onClick={() => {
+                setTaskFilter(option.key)
+                navigateAppTo(getOperationHrefForTaskFilter(option.key))
+              }}
             >
               {option.label} ({option.count})
             </Button>
