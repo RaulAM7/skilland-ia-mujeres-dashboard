@@ -19,8 +19,11 @@ export function useIaMujeresSnapshot() {
 
     async function loadSnapshot() {
       try {
-        const response = await fetch('/api/ia-mujeres/snapshot')
-        const json = (await response.json()) as IaMujeresDashboardSnapshot
+        const [response, { parseDashboardSnapshot }] = await Promise.all([
+          fetch('/api/ia-mujeres/snapshot'),
+          import('../types/parse-dashboard-snapshot'),
+        ])
+        const json = parseDashboardSnapshot(await response.json())
 
         if (!cancelled) {
           setState({
