@@ -1,5 +1,9 @@
 import type { TaskQueueFilter } from './filter-tasks'
 
+export function isOperationFilterActive(filter: TaskQueueFilter) {
+  return filter !== 'all'
+}
+
 export function getTaskFilterFromSearch(search: string) {
   const params = new URLSearchParams(search)
   const filter = params.get('filter')

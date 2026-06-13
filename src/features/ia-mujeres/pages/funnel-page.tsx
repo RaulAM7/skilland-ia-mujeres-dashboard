@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { navigateAppTo } from '@/lib/app-navigation'
 import { FunnelStageTable } from '../components/funnel-stage-table'
@@ -7,7 +8,7 @@ import { LazyFunnelStageChart } from '../components/lazy-funnel-stage-chart'
 import { OpportunitiesTable } from '../components/opportunities-table'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { filterOpportunities } from '../lib/filter-opportunities'
-import { getFunnelFiltersFromSearch, getFunnelHref } from '../lib/funnel-route-filter'
+import { getFunnelFiltersFromSearch, getFunnelHref, hasActiveFunnelFilters } from '../lib/funnel-route-filter'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 export function FunnelPage({
@@ -36,6 +37,12 @@ export function FunnelPage({
     setTechnicalOutcome(routeFilters.technicalOutcome)
   }, [routeFilters])
 
+  const activeFilterLabels = [
+    search.trim() ? `Busqueda: ${search.trim()}` : null,
+    stageKey !== 'all' ? `Stage: ${stageKey}` : null,
+    technicalOutcome !== 'all' ? `Outcome: ${technicalOutcome}` : null,
+  ].filter(Boolean) as string[]
+
   const syncRoute = (nextFilters: { search: string; stageKey: string; technicalOutcome: string }) => {
     navigateAppTo(getFunnelHref(nextFilters), undefined, { historyMode: 'replace' })
   }
@@ -62,11 +69,37 @@ export function FunnelPage({
             <CardTitle>Filtros de oportunidades</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">Busca entidades y reduce la tabla por stage u outcome tecnico.</p>
           </div>
-          <Badge variant="muted">
-            Mostrando {filteredOpportunities.length} de {snapshot.opportunities.length}
-          </Badge>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <Badge variant="muted">
+              Mostrando {filteredOpportunities.length} de {snapshot.opportunities.length}
+            </Badge>
+            {hasActiveFunnelFilters({ search, stageKey, technicalOutcome }) ? (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setSearch('')
+                  setStageKey('all')
+                  setTechnicalOutcome('all')
+                  navigateAppTo('/ia-mujeres/funnel', undefined, { historyMode: 'replace' })
+                }}
+              >
+                Limpiar filtros
+              </Button>
+            ) : null}
+          </div>
         </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-[1.4fr_0.8fr_0.8fr]">
+        <CardContent className="space-y-3">
+          {activeFilterLabels.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {activeFilterLabels.map((label) => (
+                <Badge key={label} variant="muted">
+                  {label}
+                </Badge>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="grid gap-3 md:grid-cols-[1.4fr_0.8fr_0.8fr]">
           <label className="space-y-1">
             <span className="text-xs font-medium text-muted-foreground">Buscar entidad o contexto</span>
             <input
@@ -132,6 +165,7 @@ export function FunnelPage({
               ))}
             </select>
           </label>
+          </div>
         </CardContent>
       </Card>
 

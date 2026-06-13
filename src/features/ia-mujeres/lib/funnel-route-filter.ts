@@ -4,6 +4,10 @@ export type FunnelRouteFilters = {
   technicalOutcome: string
 }
 
+export function hasActiveFunnelFilters(filters: FunnelRouteFilters) {
+  return Boolean(filters.search.trim() || filters.stageKey !== 'all' || filters.technicalOutcome !== 'all')
+}
+
 export function getFunnelFiltersFromSearch(search: string): FunnelRouteFilters {
   const params = new URLSearchParams(search)
 

@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { navigateAppTo } from '@/lib/app-navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
 import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
 import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
-import { getOperationHrefForTaskFilter, getTaskFilterFromSearch } from '../lib/operation-route-filter'
+import { getOperationHrefForTaskFilter, getTaskFilterFromSearch, isOperationFilterActive } from '../lib/operation-route-filter'
 import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
@@ -63,8 +64,26 @@ export function OperationPage({
               Filtra la muestra actual de tareas por urgencia o tipo de trabajo operativo.
             </p>
           </div>
+          {isOperationFilterActive(taskFilter) ? (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setTaskFilter('all')
+                navigateAppTo('/ia-mujeres/operation', undefined, { historyMode: 'replace' })
+              }}
+            >
+              Limpiar filtro
+            </Button>
+          ) : null}
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
+        <CardContent className="space-y-3">
+          {isOperationFilterActive(taskFilter) ? (
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="muted">Cola activa: {getTaskQueueLabel(taskFilter)}</Badge>
+            </div>
+          ) : null}
+
+          <div className="flex flex-wrap gap-2">
           {taskQueueOptions.map((option) => (
             <Button
               key={option.key}
@@ -77,6 +96,7 @@ export function OperationPage({
               {option.label} ({option.count})
             </Button>
           ))}
+          </div>
         </CardContent>
       </Card>
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getFunnelFiltersFromSearch, getFunnelHref } from '../src/features/ia-mujeres/lib/funnel-route-filter'
+import { getFunnelFiltersFromSearch, getFunnelHref, hasActiveFunnelFilters } from '../src/features/ia-mujeres/lib/funnel-route-filter'
 
 describe('funnel route filter helpers', () => {
   it('parses funnel filters from the query string with safe defaults', () => {
@@ -32,5 +32,23 @@ describe('funnel route filter helpers', () => {
         technicalOutcome: 'all',
       }),
     ).toBe('/ia-mujeres/funnel')
+  })
+
+  it('detects whether any funnel filter is active', () => {
+    expect(
+      hasActiveFunnelFilters({
+        search: '',
+        stageKey: 'all',
+        technicalOutcome: 'all',
+      }),
+    ).toBe(false)
+
+    expect(
+      hasActiveFunnelFilters({
+        search: 'universidad',
+        stageKey: 'all',
+        technicalOutcome: 'all',
+      }),
+    ).toBe(true)
   })
 })

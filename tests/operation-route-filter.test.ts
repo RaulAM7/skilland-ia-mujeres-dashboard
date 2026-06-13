@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getOperationHrefForTaskFilter, getTaskFilterFromSearch } from '../src/features/ia-mujeres/lib/operation-route-filter'
+import { getOperationHrefForTaskFilter, getTaskFilterFromSearch, isOperationFilterActive } from '../src/features/ia-mujeres/lib/operation-route-filter'
 
 describe('operation route filter helpers', () => {
   it('maps query params to task queue filters safely', () => {
@@ -16,5 +16,10 @@ describe('operation route filter helpers', () => {
     expect(getOperationHrefForTaskFilter('overdue')).toBe('/ia-mujeres/operation?filter=overdue')
     expect(getOperationHrefForTaskFilter('followup')).toBe('/ia-mujeres/operation?filter=followup')
     expect(getOperationHrefForTaskFilter('review')).toBe('/ia-mujeres/operation?filter=manual_review')
+  })
+
+  it('detects whether the current task queue is filtered', () => {
+    expect(isOperationFilterActive('all')).toBe(false)
+    expect(isOperationFilterActive('review')).toBe(true)
   })
 })
