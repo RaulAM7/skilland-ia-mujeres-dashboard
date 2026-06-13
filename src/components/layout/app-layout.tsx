@@ -10,7 +10,15 @@ const navigation = [
   { href: '/ia-mujeres/debug', label: 'Debug', icon: Bug },
 ]
 
-export function AppLayout({ children, pathname }: { children: ReactNode; pathname: string }) {
+export function AppLayout({
+  children,
+  pathname,
+  headerActions,
+}: {
+  children: ReactNode
+  pathname: string
+  headerActions?: ReactNode
+}) {
   return (
     <div className="min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-border bg-card lg:block">
@@ -71,9 +79,12 @@ export function AppLayout({ children, pathname }: { children: ReactNode; pathnam
                 <h1 className="text-lg font-semibold">IA Mujeres</h1>
                 <p className="text-sm text-muted-foreground">Centro de mando operativo del funnel</p>
               </div>
-              <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                Read-only
-              </span>
+              <div className="flex items-center gap-2">
+                {headerActions}
+                <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                  Read-only
+                </span>
+              </div>
             </div>
             <nav className="flex gap-2 overflow-x-auto lg:hidden">
               {navigation.map((item) => {

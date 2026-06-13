@@ -1,6 +1,9 @@
+import { RotateCw } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AppLayout } from '@/components/layout/app-layout'
 import { APP_NAVIGATION_EVENT, normalizeAppPathname } from '@/lib/app-navigation'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { DebugPage } from '@/features/ia-mujeres/pages/debug-page'
 import { FunnelPage } from '@/features/ia-mujeres/pages/funnel-page'
@@ -10,11 +13,26 @@ import { useIaMujeresSnapshot } from '@/features/ia-mujeres/hooks/use-ia-mujeres
 
 export default function App() {
   const pathname = usePathname()
-  const { data, loading, error, transportWarning } = useIaMujeresSnapshot()
+  const { data, loading, refreshing, error, transportWarning, reload } = useIaMujeresSnapshot()
 
   return (
-    <AppLayout pathname={pathname}>
+    <AppLayout
+      pathname={pathname}
+      headerActions={
+        <Button
+          variant="secondary"
+          disabled={loading || refreshing}
+          onClick={() => {
+            void reload()
+          }}
+        >
+          <RotateCw className={cn('mr-2 size-4', refreshing && 'animate-spin')} aria-hidden="true" />
+          {refreshing ? 'Actualizando...' : 'Recargar snapshot'}
+        </Button>
+      }
+    >
       {loading ? <LoadingState /> : null}
+      {!loading && data && error ? <InlineErrorState message={error} /> : null}
       {!loading && error && !data ? <ErrorState message={error} /> : null}
       {!loading && data && transportWarning ? <TransportWarningState message={transportWarning} /> : null}
       {!loading && data ? renderRoute(pathname, data) : null}
@@ -41,6 +59,14 @@ function ErrorState({ message }: { message: string }) {
   return (
     <Card className="border-rose-200 bg-rose-50">
       <CardContent className="p-6 text-sm text-rose-800">{message}</CardContent>
+    </Card>
+  )
+}
+
+function InlineErrorState({ message }: { message: string }) {
+  return (
+    <Card className="border-rose-200 bg-rose-50">
+      <CardContent className="p-4 text-sm text-rose-800">{message}</CardContent>
     </Card>
   )
 }
