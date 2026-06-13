@@ -19,6 +19,8 @@ describe('ManualReviewList', () => {
     expect(html).toContain('Revision manual y senales tecnicas')
     expect(html).toContain('Buscar contacto alternativo')
     expect(html).toContain('Mock bounce/contacto incorrecto')
+    expect(html).toContain('Abrir en funnel')
+    expect(html).toContain('/ia-mujeres/funnel?')
   })
 
   it('renders a safe empty state when there are no review items', () => {

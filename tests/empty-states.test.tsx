@@ -27,6 +27,27 @@ describe('empty states', () => {
     expect(html).toContain('No hay tareas para mostrar en este momento.')
   })
 
+  it('renders a linked related entity when a task provides one', () => {
+    const html = renderToStaticMarkup(
+      <TasksTable
+        tasks={[
+          {
+            id: 'task-entity',
+            title: 'Validar contacto',
+            status: 'open',
+            relatedCompany: {
+              id: 'co-entity',
+              name: 'Universidad Demo',
+            },
+          },
+        ]}
+      />,
+    )
+
+    expect(html).toContain('href="/ia-mujeres/funnel?q=Universidad+Demo"')
+    expect(html).toContain('Universidad Demo')
+  })
+
   it('renders a message when no stages are available', () => {
     const html = renderToStaticMarkup(<FunnelStageTable stages={[]} />)
 

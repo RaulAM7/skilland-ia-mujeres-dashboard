@@ -1,6 +1,8 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
+import { getTaskRelatedEntityHref } from '../lib/entity-links'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
 
 const statusVariant = {
@@ -43,17 +45,42 @@ export function TasksTable({
                 </TableCell>
               </TableRow>
             ) : null}
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell className="min-w-72 font-medium">{task.title}</TableCell>
-                <TableCell>
-                  <Badge variant={statusVariant[task.status as keyof typeof statusVariant] ?? 'muted'}>{task.status}</Badge>
-                </TableCell>
-                <TableCell>{task.dueAt ? new Date(task.dueAt).toLocaleString() : 'Sin fecha'}</TableCell>
-                <TableCell>{task.category ?? 'other'}</TableCell>
-                <TableCell>{task.relatedCompany?.name ?? task.relatedOpportunity?.name ?? 'Sin relacion'}</TableCell>
-              </TableRow>
-            ))}
+            {tasks.map((task) => {
+              const relatedEntityHref = getTaskRelatedEntityHref(task)
+
+              return (
+                <TableRow key={task.id}>
+                  <TableCell className="min-w-72 font-medium">{task.title}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant[task.status as keyof typeof statusVariant] ?? 'muted'}>{task.status}</Badge>
+                  </TableCell>
+                  <TableCell>{task.dueAt ? new Date(task.dueAt).toLocaleString() : 'Sin fecha'}</TableCell>
+                  <TableCell>{task.category ?? 'other'}</TableCell>
+                  <TableCell>
+                    {relatedEntityHref ? (
+                      <a
+                        href={relatedEntityHref}
+                        onClick={(event) => {
+                          if (
+                            !shouldHandleAppNavigation({ event, href: relatedEntityHref, locationOrigin: window.location.origin })
+                          ) {
+                            return
+                          }
+
+                          event.preventDefault()
+                          navigateAppTo(relatedEntityHref)
+                        }}
+                        className="font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-primary"
+                      >
+                        {task.relatedCompany?.name ?? task.relatedOpportunity?.name}
+                      </a>
+                    ) : (
+                      'Sin relacion'
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </CardContent>
