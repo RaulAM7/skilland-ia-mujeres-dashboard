@@ -4,6 +4,7 @@ import {
   DATA_CONTRACT_OUTPUT_DIR,
   extractRestRecords,
   loadTwentyScriptEnv,
+  renderMissingEnvSummary,
   safeErrorMessage,
   uniqueStrings,
   writeJsonOutput,
@@ -37,7 +38,7 @@ async function main() {
       campaignKey: env.campaignKey,
     }
     await writeJsonOutput(RAW_OUTPUT, payload)
-    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(env.missing))
+    await writeMarkdownOutput(SUMMARY_OUTPUT, renderMissingEnvSummary('IA Mujeres CRM Probe Summary', env.missing))
     console.log(`SKIPPED IA Mujeres CRM probe: missing ${env.missing.join(', ')}.`)
     return
   }
@@ -93,20 +94,6 @@ async function main() {
   )
   await writeMarkdownOutput(SUMMARY_OUTPUT, renderProbeSummary(generatedAt, env.campaignKey, results))
   console.log(`IA Mujeres CRM probe summary written to ${SUMMARY_OUTPUT}.`)
-}
-
-function renderSkippedSummary(missing: string[]) {
-  return `# IA Mujeres CRM Probe Summary
-
-Status: skipped
-
-Reason: Missing required server-side CRM environment variables.
-
-Missing:
-${missing.map((name) => `- ${name}`).join('\n')}
-
-No CRM request was made and no secrets were read.
-`
 }
 
 function renderProbeSummary(generatedAt: string, campaignKey: string, results: ObjectProbeResult[]) {

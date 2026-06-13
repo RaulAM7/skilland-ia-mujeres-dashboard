@@ -4,6 +4,7 @@ import {
   asRecordArray,
   isRecord,
   loadTwentyScriptEnv,
+  renderMissingEnvSummary,
   safeErrorMessage,
   uniqueStrings,
   writeJsonOutput,
@@ -50,7 +51,7 @@ async function main() {
       missingEnv: env.missing,
     }
     await writeJsonOutput(RAW_OUTPUT, payload)
-    await writeMarkdownOutput(SUMMARY_OUTPUT, renderSkippedSummary(env.missing))
+    await writeMarkdownOutput(SUMMARY_OUTPUT, renderMissingEnvSummary('Twenty Schema Discovery Summary', env.missing))
     console.log(`SKIPPED Twenty schema discovery: missing ${env.missing.join(', ')}.`)
     return
   }
@@ -71,20 +72,6 @@ async function main() {
     console.error(`Twenty schema discovery failed: ${message}`)
     process.exitCode = 1
   }
-}
-
-function renderSkippedSummary(missing: string[]) {
-  return `# Twenty Schema Discovery Summary
-
-Status: skipped
-
-Reason: Missing required server-side CRM environment variables.
-
-Missing:
-${missing.map((name) => `- ${name}`).join('\n')}
-
-No CRM request was made and no secrets were read.
-`
 }
 
 function renderFailedSummary(generatedAt: string, message: string) {

@@ -74,6 +74,20 @@ export async function writeMarkdownOutput(relativePath: string, markdown: string
   await writeFile(relativePath, markdown.endsWith('\n') ? markdown : `${markdown}\n`, 'utf8')
 }
 
+export function renderMissingEnvSummary(title: string, missing: string[]) {
+  return `# ${title}
+
+Status: skipped
+
+Reason: Missing required server-side CRM environment variables.
+
+Missing:
+${missing.map((name) => `- ${name}`).join('\n')}
+
+No CRM request was made and no secrets were read.
+`
+}
+
 export function safeErrorMessage(error: unknown, secrets: string[] = []) {
   const message = error instanceof Error ? error.message : 'Unknown Twenty script error.'
   return redactSensitiveText(message, secrets)
