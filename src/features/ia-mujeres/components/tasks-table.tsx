@@ -12,15 +12,17 @@ const statusVariant = {
 
 export function TasksTable({
   tasks,
+  title = 'Tareas',
   emptyMessage = 'No hay tareas para mostrar en este momento.',
 }: {
   tasks: IaMujeresDashboardSnapshot['tasks']
+  title?: string
   emptyMessage?: string
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tareas</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="overflow-x-auto">
         <Table>
