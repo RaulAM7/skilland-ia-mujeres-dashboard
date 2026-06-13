@@ -6,6 +6,7 @@ import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { SnapshotStatusBadge } from '../components/snapshot-status-badge'
+import { TechnicalEmailOutcomesPanel } from '../components/technical-email-outcomes-panel'
 import { TasksTable } from '../components/tasks-table'
 import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
 import { getRecentBatches } from '../lib/recent-batches'
@@ -47,7 +48,10 @@ export function OverviewPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsho
 
       <ManualReviewList opportunities={manualReview} />
 
-      <BatchesTable batches={recentBatches} />
+      <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+        <TechnicalEmailOutcomesPanel snapshot={snapshot} />
+        <BatchesTable batches={recentBatches} />
+      </section>
     </div>
   )
 }
