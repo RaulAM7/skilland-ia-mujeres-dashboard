@@ -52,6 +52,21 @@ export function sortTasksByUrgency(tasks: IaMujeresDashboardSnapshot['tasks']) {
   return [...tasks].sort(compareTasks)
 }
 
+export function filterTasksByEntity(
+  tasks: IaMujeresDashboardSnapshot['tasks'],
+  entitySearch: string,
+) {
+  const normalizedSearch = normalize(entitySearch)
+
+  if (!normalizedSearch) {
+    return tasks
+  }
+
+  return tasks.filter((task) =>
+    normalize([task.relatedCompany?.name, task.relatedOpportunity?.name].filter(Boolean).join(' ')).includes(normalizedSearch),
+  )
+}
+
 function compareTasks(left: IaMujeresDashboardSnapshot['tasks'][number], right: IaMujeresDashboardSnapshot['tasks'][number]) {
   return compareTaskStatus(left.status, right.status) || compareDates(left.dueAt, right.dueAt) || left.title.localeCompare(right.title)
 }
@@ -83,4 +98,8 @@ function compareDates(left: string | undefined, right: string | undefined) {
   if (left) return -1
   if (right) return 1
   return 0
+}
+
+function normalize(value: string | undefined) {
+  return value?.trim().toLowerCase() ?? ''
 }

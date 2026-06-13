@@ -4,6 +4,21 @@ export function getManualReviewOpportunities(opportunities: DashboardOpportunity
   return opportunities.filter(needsManualReview).sort(compareManualReviewOpportunities)
 }
 
+export function filterManualReviewOpportunitiesByEntity(
+  opportunities: DashboardOpportunity[],
+  entitySearch: string,
+) {
+  const normalizedSearch = normalize(entitySearch)
+
+  if (!normalizedSearch) {
+    return opportunities
+  }
+
+  return opportunities.filter((opportunity) =>
+    normalize([opportunity.companyName, opportunity.name].filter(Boolean).join(' ')).includes(normalizedSearch),
+  )
+}
+
 function needsManualReview(opportunity: DashboardOpportunity) {
   return (
     opportunity.commercialStage === 'WRONG_CONTACT_MANUAL_REVIEW' ||
@@ -43,4 +58,8 @@ function compareDates(left: string | undefined, right: string | undefined) {
 
 function getOpportunityLabel(opportunity: DashboardOpportunity) {
   return opportunity.companyName ?? opportunity.name
+}
+
+function normalize(value: string | undefined) {
+  return value?.trim().toLowerCase() ?? ''
 }

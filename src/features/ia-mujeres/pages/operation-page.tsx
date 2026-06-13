@@ -4,9 +4,14 @@ import { Button } from '@/components/ui/button'
 import { navigateAppTo } from '@/lib/app-navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
-import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
-import { getManualReviewOpportunities } from '../lib/manual-review-opportunities'
-import { getOperationHrefForTaskFilter, getTaskFilterFromSearch, isOperationFilterActive } from '../lib/operation-route-filter'
+import { filterTasks, filterTasksByEntity, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
+import { filterManualReviewOpportunitiesByEntity, getManualReviewOpportunities } from '../lib/manual-review-opportunities'
+import {
+  getOperationHref,
+  getOperationRouteFiltersFromSearch,
+  hasActiveOperationRouteFilters,
+  isOperationFilterActive,
+} from '../lib/operation-route-filter'
 import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
@@ -20,20 +25,30 @@ export function OperationPage({
   snapshot: IaMujeresDashboardSnapshot
   search?: string
 }) {
-  const routeFilter = useMemo(() => getTaskFilterFromSearch(search), [search])
-  const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>(routeFilter)
-  const manualReview = getManualReviewOpportunities(snapshot.opportunities)
-  const filteredTasks = filterTasks(snapshot.tasks, taskFilter)
+  const routeFilters = useMemo(() => getOperationRouteFiltersFromSearch(search), [search])
+  const [taskFilter, setTaskFilter] = useState<TaskQueueFilter>(routeFilters.taskFilter)
+  const [entitySearch, setEntitySearch] = useState(routeFilters.entitySearch)
+  const entityScopedTasks = filterTasksByEntity(snapshot.tasks, entitySearch)
+  const filteredTasks = filterTasks(entityScopedTasks, taskFilter)
+  const manualReview = filterManualReviewOpportunitiesByEntity(
+    getManualReviewOpportunities(snapshot.opportunities),
+    entitySearch,
+  )
   const taskQueueOptions: Array<{ key: TaskQueueFilter; label: string; count: number }> = [
-    { key: 'all', label: 'Todas', count: snapshot.tasks.length },
-    { key: 'overdue', label: 'Vencidas', count: filterTasks(snapshot.tasks, 'overdue').length },
-    { key: 'followup', label: 'Follow-up', count: filterTasks(snapshot.tasks, 'followup').length },
-    { key: 'review', label: 'Revision', count: filterTasks(snapshot.tasks, 'review').length },
+    { key: 'all', label: 'Todas', count: entityScopedTasks.length },
+    { key: 'overdue', label: 'Vencidas', count: filterTasks(entityScopedTasks, 'overdue').length },
+    { key: 'followup', label: 'Follow-up', count: filterTasks(entityScopedTasks, 'followup').length },
+    { key: 'review', label: 'Revision', count: filterTasks(entityScopedTasks, 'review').length },
   ]
 
   useEffect(() => {
-    setTaskFilter(routeFilter)
-  }, [routeFilter])
+    setTaskFilter(routeFilters.taskFilter)
+    setEntitySearch(routeFilters.entitySearch)
+  }, [routeFilters])
+
+  const syncRoute = (nextFilters: { taskFilter: TaskQueueFilter; entitySearch: string }) => {
+    navigateAppTo(getOperationHref(nextFilters), undefined, { historyMode: 'replace' })
+  }
 
   return (
     <div className="space-y-6">
@@ -64,45 +79,67 @@ export function OperationPage({
               Filtra la muestra actual de tareas por urgencia o tipo de trabajo operativo.
             </p>
           </div>
-          {isOperationFilterActive(taskFilter) ? (
+          {hasActiveOperationRouteFilters({ taskFilter, entitySearch }) ? (
             <Button
               variant="ghost"
               onClick={() => {
                 setTaskFilter('all')
+                setEntitySearch('')
                 navigateAppTo('/ia-mujeres/operation', undefined, { historyMode: 'replace' })
               }}
             >
-              Limpiar filtro
+              Limpiar filtros
             </Button>
           ) : null}
         </CardHeader>
         <CardContent className="space-y-3">
-          {isOperationFilterActive(taskFilter) ? (
+          {hasActiveOperationRouteFilters({ taskFilter, entitySearch }) ? (
             <div className="flex flex-wrap gap-2">
-              <Badge variant="muted">Cola activa: {getTaskQueueLabel(taskFilter)}</Badge>
+              {isOperationFilterActive(taskFilter) ? <Badge variant="muted">Cola activa: {getTaskQueueLabel(taskFilter)}</Badge> : null}
+              {entitySearch ? <Badge variant="muted">Entidad: {entitySearch}</Badge> : null}
             </div>
           ) : null}
 
-          <div className="flex flex-wrap gap-2">
-          {taskQueueOptions.map((option) => (
-            <Button
-              key={option.key}
-              variant={taskFilter === option.key ? 'default' : 'secondary'}
-              onClick={() => {
-                setTaskFilter(option.key)
-                navigateAppTo(getOperationHrefForTaskFilter(option.key))
+          <label className="space-y-1">
+            <span className="text-xs font-medium text-muted-foreground">Filtrar entidad</span>
+            <input
+              value={entitySearch}
+              onChange={(event) => {
+                const nextEntitySearch = event.target.value
+                setEntitySearch(nextEntitySearch)
+                syncRoute({
+                  taskFilter,
+                  entitySearch: nextEntitySearch,
+                })
               }}
-            >
-              {option.label} ({option.count})
-            </Button>
-          ))}
+              placeholder="Ej. Camara Comercio Demo"
+              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+            />
+          </label>
+
+          <div className="flex flex-wrap gap-2">
+            {taskQueueOptions.map((option) => (
+              <Button
+                key={option.key}
+                variant={taskFilter === option.key ? 'default' : 'secondary'}
+                onClick={() => {
+                  setTaskFilter(option.key)
+                  syncRoute({
+                    taskFilter: option.key,
+                    entitySearch,
+                  })
+                }}
+              >
+                {option.label} ({option.count})
+              </Button>
+            ))}
           </div>
         </CardContent>
       </Card>
 
       <TasksTable
         tasks={filteredTasks}
-        title={getTaskQueueLabel(taskFilter)}
+        title={entitySearch ? `${getTaskQueueLabel(taskFilter)} · ${entitySearch}` : getTaskQueueLabel(taskFilter)}
         emptyMessage={getTaskQueueEmptyMessage(taskFilter)}
       />
       <ManualReviewList opportunities={manualReview} />

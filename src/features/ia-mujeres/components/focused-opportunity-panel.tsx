@@ -1,5 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { navigateAppTo, shouldHandleAppNavigation } from '@/lib/app-navigation'
+import { getOperationHref } from '../lib/operation-route-filter'
 import { getTechnicalOutcomeLabel } from '../lib/technical-outcome-labels'
 import type { DashboardOpportunity, DashboardTask } from '../types/dashboard-snapshot'
 
@@ -11,6 +13,10 @@ export function FocusedOpportunityPanel({
   relatedTasks: DashboardTask[]
 }) {
   const nextTask = relatedTasks[0]
+  const operationHref = getOperationHref({
+    taskFilter: 'all',
+    entitySearch: opportunity.companyName ?? opportunity.name,
+  })
 
   return (
     <Card>
@@ -52,6 +58,23 @@ export function FocusedOpportunityPanel({
         ) : (
           <p className="text-sm text-muted-foreground">No hay tareas relacionadas con esta entidad en la muestra actual.</p>
         )}
+
+        <div>
+          <a
+            href={operationHref}
+            onClick={(event) => {
+              if (!shouldHandleAppNavigation({ event, href: operationHref, locationOrigin: window.location.origin })) {
+                return
+              }
+
+              event.preventDefault()
+              navigateAppTo(operationHref)
+            }}
+            className="inline-flex text-sm font-medium text-foreground underline underline-offset-4"
+          >
+            Abrir entidad en operacion
+          </a>
+        </div>
       </CardContent>
     </Card>
   )

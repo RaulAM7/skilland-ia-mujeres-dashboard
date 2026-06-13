@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import mockSnapshot from '../public/mock-data/ia-mujeres-snapshot.mock.json'
-import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel } from '../src/features/ia-mujeres/lib/filter-tasks'
+import { filterTasks, filterTasksByEntity, getTaskQueueEmptyMessage, getTaskQueueLabel } from '../src/features/ia-mujeres/lib/filter-tasks'
 import { parseDashboardSnapshot } from '../src/features/ia-mujeres/types/parse-dashboard-snapshot'
 
 const tasks = parseDashboardSnapshot(mockSnapshot).tasks
@@ -55,6 +55,15 @@ describe('filterTasks', () => {
     )
 
     expect(filtered.map((task) => task.id)).toEqual(['task-1', 'task-2', 'task-3'])
+  })
+
+  it('filters tasks by related entity name', () => {
+    const filtered = filterTasksByEntity(tasks, 'Camara Comercio Demo')
+
+    expect(filtered.length).toBeGreaterThan(0)
+    expect(filtered.every((task) => (task.relatedCompany?.name ?? task.relatedOpportunity?.name ?? '').includes('Camara Comercio Demo'))).toBe(
+      true,
+    )
   })
 
   it('exposes stable labels and empty messages', () => {

@@ -10,7 +10,16 @@ describe('OperationPage', () => {
 
     const html = renderToStaticMarkup(<OperationPage snapshot={snapshot} search="?filter=manual_review" />)
 
-    expect(html).toContain('Limpiar filtro')
+    expect(html).toContain('Limpiar filtros')
     expect(html).toContain('Cola activa: Revision')
+  })
+
+  it('surfaces entity context when the route is filtered by entity', () => {
+    const snapshot = parseDashboardSnapshot(mockSnapshot)
+
+    const html = renderToStaticMarkup(<OperationPage snapshot={snapshot} search="?entity=Camara+Comercio+Demo" />)
+
+    expect(html).toContain('Entidad: Camara Comercio Demo')
+    expect(html).toContain('Tareas · Camara Comercio Demo')
   })
 })

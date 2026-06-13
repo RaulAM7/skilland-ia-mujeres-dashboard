@@ -27,5 +27,7 @@ describe('FunnelPage', () => {
     expect(html).toContain('Camara Comercio Demo')
     expect(html).toContain('Tareas relacionadas')
     expect(html).toContain('Preparar follow-up 1 para Camara Comercio Demo')
+    expect(html).toContain('Abrir entidad en operacion')
+    expect(html).toContain('/ia-mujeres/operation?entity=Camara+Comercio+Demo')
   })
 })
