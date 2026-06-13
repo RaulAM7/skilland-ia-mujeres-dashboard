@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertsPanel } from '../components/alerts-panel'
 import { filterTasks, getTaskQueueEmptyMessage, getTaskQueueLabel, type TaskQueueFilter } from '../lib/filter-tasks'
+import { ManualReviewList } from '../components/manual-review-list'
 import { NextActionsPanel } from '../components/next-actions-panel'
-import { OpportunitiesTable } from '../components/opportunities-table'
 import { SnapshotHealthBanner } from '../components/snapshot-health-banner'
 import { TasksTable } from '../components/tasks-table'
 import type { IaMujeresDashboardSnapshot } from '../types/dashboard-snapshot'
@@ -73,11 +73,7 @@ export function OperationPage({ snapshot }: { snapshot: IaMujeresDashboardSnapsh
         title={getTaskQueueLabel(taskFilter)}
         emptyMessage={getTaskQueueEmptyMessage(taskFilter)}
       />
-      <OpportunitiesTable
-        opportunities={manualReview}
-        title="Revision manual y señales tecnicas"
-        emptyMessage="No hay oportunidades en revision manual ni incidencias tecnicas pendientes."
-      />
+      <ManualReviewList opportunities={manualReview} />
     </div>
   )
 }
